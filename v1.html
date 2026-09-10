@@ -1,0 +1,2077 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Valaya Store - Billing</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,sans-serif;background:#f5f7fa;color:#222}
+header{background:#087ff5;color:#fff;text-align:center;padding:18px}
+header h1{margin:0;font-size:24px}
+.container{display:grid;grid-template-columns:330px 1fr;gap:16px;padding:16px;max-width:1400px;margin:auto}
+.panel{background:#fff;border:1px solid #ddd;border-radius:8px;padding:16px}
+h2{font-size:18px;margin:0 0 14px;border-bottom:1px solid #ddd;padding-bottom:10px}
+h3{font-size:15px;margin:18px 0 10px}
+input,select,textarea{width:100%;padding:9px;border:1px solid #ccc;border-radius:6px;font:inherit}
+textarea{resize:vertical}
+button{border:0;border-radius:6px;padding:9px 13px;cursor:pointer;font-weight:600}
+button:hover{opacity:.9}
+.primary{background:#087ff5;color:#fff}
+.green{background:#20a548;color:#fff}
+.whatsapp{background:#25d366;color:#fff}
+.red{background:#dc3545;color:#fff}
+.gray{background:#eee;color:#222}
+.small{padding:6px 9px;font-size:12px}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.full{grid-column:1/-1}
+.inventory-section{margin-bottom:22px}
+.inventory-section form{display:grid;gap:7px}
+.inventory-section table{font-size:12px}
+table{width:100%;border-collapse:collapse;margin-top:8px}
+th,td{border-bottom:1px solid #e3e3e3;padding:8px;text-align:left}
+th{background:#f5f5f5}
+.saved-actions{display:flex;gap:5px;flex-wrap:wrap}
+.bill-header{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.bill-meta{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
+.meta-box{padding:9px;background:#f5f7fa;border-radius:6px}
+.meta-box b{display:block;font-size:12px;color:#666;margin-bottom:3px}
+
+.products-box{border:1px solid #ddd;border-radius:8px;padding:12px;margin-top:16px}
+.add-product{display:flex;gap:8px}
+.product-list{margin-top:10px;display:grid;gap:6px}
+.product-row{display:grid;grid-template-columns:1fr auto auto;gap:7px;align-items:center;border:1px solid #ddd;border-radius:6px;padding:8px;background:#fafafa}
+.product-row.selected{border-color:#087ff5;background:#eef6ff}
+.product-name{font-weight:600}
+.product-price{font-weight:700}
+.product-row .actions{display:flex;gap:5px}
+.selected-product{margin-top:10px;border-top:1px solid #ddd;padding-top:10px}
+.selected-title{display:flex;justify-content:space-between;align-items:center;margin-bottom:9px}
+.selected-title strong{font-size:16px}
+.costing-controls{display:grid;grid-template-columns:140px 1fr 120px auto;gap:8px;margin-bottom:10px}
+.product-options{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
+.option{display:grid;grid-template-columns:auto 100px;gap:7px;align-items:center}
+.option label{font-size:13px;font-weight:600}
+.calculation{border:1px solid #ddd;border-radius:6px;padding:9px;margin-top:8px}
+.calc-line{display:flex;justify-content:space-between;padding:3px 0;font-size:13px}
+.calc-total{border-top:1px solid #ddd;margin-top:5px;padding-top:6px;font-weight:700}
+.calc-final{border-top:2px solid #087ff5;margin-top:5px;padding-top:7px;color:#087ff5;font-size:15px;font-weight:700}
+.order-total{margin-top:16px;border:1px solid #ddd;border-radius:8px;padding:12px}
+.summary-line{display:grid;grid-template-columns:1fr 160px;gap:10px;align-items:center;margin:7px 0}
+.grand{border-top:2px solid #087ff5;margin-top:12px;padding-top:10px;color:#087ff5;font-size:19px;font-weight:700}
+.bill-actions{display:flex;gap:10px;margin-top:16px}
+.bill-actions button{flex:1}
+.help{font-size:12px;color:#666;margin:5px 0 10px}
+.test-btn{background:#7041c1;color:#fff;width:100%;margin-bottom:8px}
+.empty{color:#777;font-size:13px;padding:8px}
+#product-select{display:none}
+
+
+
+/* ===== PRODUCT LIST PERCENTAGES + COLLAPSIBLE ITEMS ===== */
+.product-row{
+  grid-template-columns:minmax(130px,1fr) 105px 120px 85px auto;
+}
+.product-row .list-percent{
+  width:100%;
+  min-width:0;
+  padding:6px 4px;
+  font-size:11px;
+  border:1px solid #ccc;
+  border-radius:5px;
+  background:#fff;
+}
+.item-list-section{
+  margin-top:14px;
+  border:1px solid #ddd;
+  border-radius:7px;
+  overflow:hidden;
+}
+.item-list-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:10px 12px;
+  background:#f5f7fa;
+}
+.item-list-header > div{
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+.item-count{
+  color:#777;
+  font-size:12px;
+}
+.item-list-section table{
+  margin-top:0;
+}
+@media(max-width:1050px){
+ .product-row{
+   grid-template-columns:minmax(120px,1fr) 95px 105px 75px auto;
+ }
+}
+@media(max-width:700px){
+ .product-row{
+   grid-template-columns:1fr auto auto;
+ }
+ .product-row .list-percent{
+   grid-column:1;
+ }
+ .product-row .product-price{
+   grid-column:2;
+ }
+ .product-row .actions{
+   grid-column:3;
+ }
+}
+
+
+
+/* ===== DISCOUNT TYPE CONTROL ===== */
+.discount-input-wrap{
+  display:grid;
+  grid-template-columns:55px 1fr;
+  gap:6px;
+}
+.discount-input-wrap select{
+  width:100%;
+  padding:9px 6px;
+}
+.discount-input-wrap input{
+  width:100%;
+}
+/* ===== COMBINED BILL SUMMARY ===== */
+.combined-bill-summary{
+  padding:12px;
+  margin-top:14px;
+}
+.combined-bill-summary .bill-summary-heading{
+  padding:0 2px 8px;
+}
+.combined-bill-summary .order-total{
+  margin-top:14px;
+  padding:12px 2px 0;
+  border:0;
+  border-top:1px solid #ddd;
+  border-radius:0;
+  background:transparent;
+}
+.combined-bill-summary .order-total h3{
+  margin-bottom:8px;
+}
+/* ===== CLEAN BILL BREAKUP ===== */
+.product-row{
+  grid-template-columns:minmax(0,1fr) auto auto;
+}
+.billing-breakup-options{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+  padding:9px 0;
+  margin-bottom:5px;
+  border-bottom:1px solid #ddd;
+}
+.billing-breakup-options > div{
+  display:grid;
+  grid-template-columns:110px 1fr;
+  gap:7px;
+  align-items:center;
+}
+.billing-breakup-options label{
+  font-weight:600;
+  font-size:13px;
+}
+.billing-breakup-options select{
+  width:100%;
+  padding:7px;
+  border:1px solid #ccc;
+  border-radius:6px;
+  background:#fff;
+}
+.bill-summary-box{
+  margin-top:14px;
+  border:1px solid #ddd;
+  border-radius:8px;
+  padding:12px;
+  background:#fff;
+}
+.bill-summary-heading{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:8px;
+}
+.summary-product-card{
+  border:1px solid #ddd;
+  border-radius:7px;
+  margin-top:7px;
+  overflow:hidden;
+  background:#fff;
+}
+.summary-product-collapsed{
+  display:grid;
+  grid-template-columns:1fr auto 24px;
+  gap:10px;
+  align-items:center;
+  padding:11px 12px;
+  cursor:pointer;
+  background:#fafafa;
+}
+.summary-product-collapsed:hover{
+  background:#f4f8ff;
+}
+.summary-product-collapsed.open{
+  background:#eef6ff;
+  border-bottom:1px solid #ddd;
+}
+.summary-product-name{
+  font-weight:700;
+}
+.summary-product-total{
+  font-weight:700;
+  color:#087ff5;
+  white-space:nowrap;
+}
+.summary-chevron{
+  font-size:12px;
+  color:#666;
+  text-align:center;
+}
+.summary-product-details{
+  padding:10px 12px;
+}
+.summary-group-title{
+  font-weight:700;
+  font-size:12px;
+  margin:5px 0 3px;
+  color:#444;
+}
+.summary-item-line{
+  display:grid;
+  grid-template-columns:1fr auto auto;
+  gap:10px;
+  font-size:12px;
+  padding:3px 0;
+  border-bottom:1px dotted #ddd;
+}
+.summary-item-line span:nth-child(2){
+  color:#666;
+}
+.summary-calculation{
+  margin-top:8px;
+  border-top:1px solid #ddd;
+  padding-top:6px;
+  font-size:12px;
+}
+.summary-calculation > div{
+  display:flex;
+  justify-content:space-between;
+  padding:3px 0;
+}
+.summary-line-strong{
+  border-top:1px solid #ddd;
+  margin-top:3px;
+  padding-top:5px!important;
+  font-weight:700;
+}
+.summary-product-price{
+  border-top:2px solid #087ff5;
+  margin-top:4px;
+  padding-top:6px!important;
+  color:#087ff5;
+  font-weight:700;
+  font-size:13px;
+}
+@media(max-width:700px){
+ .billing-breakup-options{grid-template-columns:1fr}
+ .billing-breakup-options > div{grid-template-columns:1fr 1fr}
+}
+
+
+/* ===== VISUAL POLISH ===== */
+body{
+  background:linear-gradient(180deg,#f6f9fc 0%,#f2f5f9 100%);
+}
+header{
+  box-shadow:0 2px 10px rgba(0,0,0,.10);
+}
+.panel{
+  box-shadow:0 2px 8px rgba(0,0,0,.05);
+}
+.products-box,
+.bill-summary-box,
+.order-total{
+  box-shadow:0 1px 5px rgba(0,0,0,.035);
+}
+.product-row{
+  transition:transform .12s ease,box-shadow .12s ease,background .12s ease;
+}
+.product-row:hover{
+  transform:translateY(-1px);
+}
+.product-row.selected{
+  box-shadow:0 0 0 2px rgba(8,127,245,.12);
+}
+.summary-product-collapsed{
+  transition:background .12s ease;
+}
+.summary-product-total{
+  font-size:15px;
+}
+.grand{
+  font-size:20px;
+}
+/* ===== TABLET-FIRST + COLLAPSIBLE CONTROL PANEL ===== */
+html,body{
+  -webkit-tap-highlight-color:transparent;
+}
+body{
+  font-size:15px;
+}
+button,input,select,textarea{
+  min-height:42px;
+}
+button{
+  touch-action:manipulation;
+}
+.panel-collapse-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:10px;
+  margin-bottom:14px;
+  padding-bottom:10px;
+  border-bottom:1px solid #ddd;
+}
+.inventory-panel.collapsed{
+  padding:10px;
+  min-width:0;
+}
+.inventory-panel.collapsed > :not(.panel-collapse-header){
+  display:none;
+}
+.inventory-panel.collapsed .panel-collapse-header{
+  margin:0;
+  padding:2px;
+  border:0;
+}
+.inventory-panel.collapsed .panel-collapse-header h2{
+  font-size:15px!important;
+}
+.backup-row{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:6px;
+  margin-bottom:8px;
+}
+.backup-row button{
+  min-height:38px;
+}
+.app-version{
+  text-align:center;
+  color:#888;
+  font-size:11px;
+  padding:6px 0 12px;
+}
+@media(min-width:901px){
+  .container{
+    grid-template-columns:minmax(250px,330px) minmax(0,1fr);
+  }
+  .container.inventory-collapsed{
+    grid-template-columns:76px minmax(0,1fr);
+  }
+  .container.inventory-collapsed .inventory-panel{
+    width:76px;
+  }
+  .container.inventory-collapsed .panel-collapse-header{
+    justify-content:center;
+    margin:0;
+    padding:2px 0;
+  }
+  .container.inventory-collapsed .panel-collapse-header > div{
+    display:none;
+  }
+  .container.inventory-collapsed #toggle-inventory{
+    width:56px;
+    min-height:46px;
+    padding:6px 4px;
+    font-size:11px;
+  }
+}
+@media(min-width:701px) and (max-width:1100px){
+  header h1{font-size:21px}
+  .container{
+    grid-template-columns:290px minmax(0,1fr);
+    gap:10px;
+    padding:10px;
+  }
+  .container.inventory-collapsed{
+    grid-template-columns:68px minmax(0,1fr);
+  }
+  .container.inventory-collapsed .inventory-panel{
+    width:68px;
+  }
+  .container.inventory-collapsed .panel-collapse-header{
+    justify-content:center;
+    margin:0;
+    padding:2px 0;
+  }
+  .container.inventory-collapsed .panel-collapse-header > div{
+    display:none;
+  }
+  .container.inventory-collapsed #toggle-inventory{
+    width:52px;
+    min-height:46px;
+    padding:6px 3px;
+    font-size:11px;
+  }
+  .panel{padding:12px}
+  .billing-workspace{
+    grid-template-columns:minmax(190px,30%) minmax(0,1fr);
+  }
+  .product-row{
+    grid-template-columns:minmax(0,1fr) auto auto;
+  }
+  .product-row .product-price{
+    grid-column:1;
+  }
+  .product-row .actions{
+    grid-column:2 / -1;
+  }
+  .costing-controls{
+    grid-template-columns:1fr 1.4fr 100px 105px;
+  }
+  th,td{
+    padding:7px 5px;
+    font-size:12px;
+  }
+}
+@media(max-width:900px){
+  .inventory-panel.collapsed{
+    display:block;
+    padding:8px 10px;
+  }
+  .inventory-panel.collapsed .panel-collapse-header{
+    margin:0;
+    padding:0;
+    border:0;
+  }
+}
+/* ===== FAST BILLING WORKSPACE ===== */
+.billing-workspace{
+  display:grid;
+  grid-template-columns:minmax(220px,32%) 1fr;
+  gap:10px;
+  margin-top:16px;
+  align-items:start;
+}
+.billing-workspace .products-box{
+  margin-top:0;
+}
+.product-sidebar{
+  position:sticky;
+  top:12px;
+}
+.workspace-heading{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:8px;
+  margin-bottom:8px;
+}
+.count-badge{
+  min-width:28px;
+  padding:4px 8px;
+  text-align:center;
+  border-radius:20px;
+  background:#eef6ff;
+  color:#087ff5;
+  font-weight:700;
+  font-size:12px;
+}
+.product-list{
+  max-height:430px;
+  overflow-y:auto;
+  padding-right:2px;
+}
+.product-row{
+  grid-template-columns:minmax(0,1fr) auto auto;
+  cursor:pointer;
+}
+.product-row.selected{
+  box-shadow:0 0 0 1px #087ff5 inset;
+}
+.product-row .actions{
+  white-space:nowrap;
+}
+.costing-workspace{
+  min-width:0;
+}
+.selected-product{
+  margin-top:0;
+  border-top:0;
+  padding-top:0;
+}
+.selected-title{
+  background:#eef6ff;
+  border-radius:6px;
+  padding:9px 10px;
+}
+.add-cost-box{
+  margin-top:10px;
+  padding:10px;
+  border:1px solid #ddd;
+  border-radius:7px;
+  background:#fafafa;
+}
+.add-cost-title{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:10px;
+  margin-bottom:8px;
+}
+.add-cost-title .help{
+  margin:0;
+  text-align:right;
+}
+.costing-controls{
+  display:grid;
+  grid-template-columns:145px minmax(150px,1fr) 120px 110px;
+  gap:7px;
+  margin:0;
+}
+.costing-controls button{
+  white-space:nowrap;
+}
+@media(max-width:900px){
+  .billing-workspace{grid-template-columns:1fr}
+  .product-sidebar{position:static}
+  .product-list{max-height:260px}
+}
+@media(max-width:600px){
+  .costing-controls{grid-template-columns:1fr}
+  .add-cost-title{display:block}
+  .add-cost-title .help{text-align:left;margin-top:3px}
+}
+@media(max-width:900px){
+ .container{grid-template-columns:1fr}
+ .costing-controls{grid-template-columns:1fr 1fr}
+}
+@media(max-width:600px){
+ .bill-header,.bill-meta,.product-options{grid-template-columns:1fr}
+ .add-product{flex-direction:column}
+ .product-row{grid-template-columns:1fr auto}
+ .product-price{grid-column:1}
+ .costing-controls{grid-template-columns:1fr}
+ .bill-actions{flex-direction:column}
+}
+@media print{
+ header,.inventory-panel,.products-box,.costing-controls,.bill-actions,.new-bill,.saved-bills,.no-print{display:none!important}
+ .container{display:block;padding:0}
+ .panel{border:0}
+}
+
+/* ========= VALAYA POLISH v1.1 ========= */
+:root{
+  --brand:#8E3A8A;
+  --brand-dark:#6F246B;
+  --brand-soft:#F9F2F8;
+  --accent:#F4C95D;
+  --bg:#F7F8FC;
+  --card:#ffffff;
+  --text:#222;
+  --muted:#6b7280;
+  --line:#E8EAF2;
+}
+*{font-family:'Poppins',system-ui,sans-serif;}
+body{
+  background:linear-gradient(180deg,#FFF8FB 0%,#F6F8FC 100%);
+  color:var(--text);
+}
+header{
+  background:linear-gradient(135deg,var(--brand),var(--brand-dark));
+  box-shadow:0 8px 24px rgba(111,36,107,.18);
+}
+header h1{
+  letter-spacing:.3px;
+  font-weight:700;
+}
+.panel,.products-box,.bill-summary-box,.order-total{
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:18px;
+  box-shadow:0 10px 28px rgba(31,41,55,.06);
+}
+h2,h3{color:#2d1f33;}
+.help{color:var(--muted);}
+button{
+  border-radius:12px;
+  font-weight:600;
+  transition:all .18s ease;
+}
+button:hover{transform:translateY(-1px);}
+.primary,.green{
+  background:linear-gradient(135deg,var(--brand),var(--brand-dark));
+}
+.green:hover,.primary:hover{
+  box-shadow:0 8px 20px rgba(111,36,107,.22);
+}
+.red{background:#DC3545;}
+.gray{background:#F3F4F6;color:#333;}
+input,select,textarea{
+  border-radius:12px;
+  border:1px solid #D8DCE8;
+  background:#fff;
+}
+input:focus,select:focus,textarea:focus{
+  outline:none;
+  border-color:var(--brand);
+  box-shadow:0 0 0 4px rgba(142,58,138,.12);
+}
+.product-row{
+  border-radius:14px;
+  border:1px solid #E5E7EB;
+}
+.product-row.selected{
+  background:linear-gradient(135deg,#FFF7FD,#F8F1FF);
+  border-color:var(--brand);
+}
+.selected-title{
+  background:linear-gradient(135deg,#FAF2FF,#F4ECFA);
+  border-radius:14px;
+}
+.summary-product-card{
+  border-radius:14px;
+  border:1px solid #E8EAF2;
+}
+.summary-product-collapsed.open{
+  background:linear-gradient(135deg,#FFF7FD,#F8F1FF);
+}
+.summary-product-total,.calc-final strong,.grand strong{
+  color:var(--brand);
+}
+.grand{
+  background:linear-gradient(90deg,#FFF8FB,#F8F1FF);
+  border-radius:12px;
+  padding:10px 14px;
+}
+.count-badge{
+  background:#F4ECFA;
+  color:var(--brand);
+}
+.add-cost-box{
+  background:#FFFDFE;
+  border-radius:14px;
+}
+.bill-actions{
+  gap:10px;
+}
+.bill-actions button{
+  min-height:50px;
+}
+.app-version{
+  color:#8a8fa3;
+  font-size:12px;
+  padding:14px 0 18px;
+}
+
+
+/* ========= VALAYA SIGNATURE UI v1.3 ========= */
+:root{
+  --v-plum:#7B2E73;
+  --v-plum-2:#5D1F57;
+  --v-lilac:#F4EAF5;
+  --v-lilac-2:#FBF7FC;
+  --v-gold:#C9A34E;
+  --v-ink:#29232B;
+  --v-muted:#77717A;
+  --v-line:#E9E3EA;
+  --v-bg:#F7F5F7;
+  --v-white:#fff;
+  --v-shadow:0 12px 35px rgba(71,42,68,.08);
+}
+html{background:var(--v-bg);scroll-behavior:smooth}
+body{
+  font-family:'Poppins',system-ui,sans-serif!important;
+  background:
+    radial-gradient(circle at 8% 0%,rgba(201,163,78,.10),transparent 24%),
+    radial-gradient(circle at 92% 0%,rgba(123,46,115,.08),transparent 28%),
+    linear-gradient(180deg,#FCFAFC 0%,#F6F4F7 100%)!important;
+  color:var(--v-ink);
+}
+.valaya-header{
+  min-height:82px;
+  padding:14px 22px!important;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:16px;
+  text-align:left!important;
+  background:linear-gradient(135deg,var(--v-plum-2),var(--v-plum))!important;
+  border-bottom:1px solid rgba(255,255,255,.12);
+  box-shadow:0 10px 30px rgba(93,31,87,.18)!important;
+}
+.brand-lockup{display:flex;align-items:center;gap:12px}
+.brand-mark{
+  width:48px;height:48px;border-radius:15px;
+  display:grid;place-items:center;
+  background:linear-gradient(145deg,#fff,#F4EAF5);
+  color:var(--v-plum);
+  box-shadow:inset 0 0 0 1px rgba(201,163,78,.45),0 5px 14px rgba(0,0,0,.10);
+  position:relative;
+}
+.brand-mark:after{content:"";position:absolute;inset:5px;border:1px solid rgba(201,163,78,.45);border-radius:11px}
+.brand-mark span{font-family:Georgia,serif;font-size:25px;font-weight:700;position:relative;z-index:1}
+.brand-name{font-size:20px;line-height:1.1;font-weight:700;letter-spacing:1.8px;color:#fff}
+.brand-subtitle{font-size:11px;color:rgba(255,255,255,.72);margin-top:3px;letter-spacing:.5px}
+.header-pill{
+  padding:8px 13px;border:1px solid rgba(255,255,255,.22);
+  border-radius:999px;color:#fff;background:rgba(255,255,255,.09);
+  font-size:12px;font-weight:600;white-space:nowrap;backdrop-filter:blur(8px)
+}
+.container{gap:18px!important;padding:18px!important;max-width:1500px!important}
+.panel,.products-box,.bill-summary-box,.order-total{
+  border:1px solid var(--v-line)!important;
+  border-radius:18px!important;
+  box-shadow:var(--v-shadow)!important;
+}
+.panel{padding:18px!important}
+.panel h2,.products-box h2{font-weight:700;letter-spacing:.1px}
+h2{border-bottom-color:var(--v-line)!important}
+h3{font-weight:700!important}
+input,select,textarea{
+  min-height:42px;
+  border:1px solid #DDD6DF!important;
+  border-radius:11px!important;
+  background:#fff!important;
+  transition:border-color .18s,box-shadow .18s,background .18s;
+}
+textarea{min-height:78px}
+input:focus,select:focus,textarea:focus{
+  border-color:var(--v-plum)!important;
+  box-shadow:0 0 0 4px rgba(123,46,115,.10)!important;
+}
+button{
+  min-height:42px;
+  border-radius:11px!important;
+  transition:transform .16s ease,box-shadow .16s ease,filter .16s ease!important;
+}
+button:hover{transform:translateY(-1px);filter:none!important}
+.primary,.green{
+  background:linear-gradient(135deg,var(--v-plum),var(--v-plum-2))!important;
+  box-shadow:0 7px 16px rgba(123,46,115,.17)
+}
+.primary:hover,.green:hover{box-shadow:0 10px 22px rgba(123,46,115,.24)!important}
+.gray{background:#F3F1F4!important;color:#4C454D!important;border:1px solid #E5E0E6!important}
+.red{box-shadow:0 5px 12px rgba(220,53,69,.12)}
+.whatsapp{box-shadow:0 5px 12px rgba(37,211,102,.12)}
+.products-box{padding:15px!important;background:rgba(255,255,255,.92)!important}
+.product-row{
+  padding:10px!important;border:1px solid #E8E2E9!important;
+  background:#fff!important;border-radius:13px!important;
+  box-shadow:0 3px 10px rgba(50,35,48,.03)
+}
+.product-row:hover{border-color:#D8C6DA!important;background:#FFFCFF!important}
+.product-row.selected{
+  border-color:var(--v-plum)!important;
+  background:linear-gradient(135deg,#FBF3FB,#F7F0F8)!important;
+  box-shadow:0 6px 16px rgba(123,46,115,.09)
+}
+.selected-title{
+  padding:11px 13px;
+  background:linear-gradient(135deg,#FBF4FB,#F6EDF7)!important;
+  border:1px solid #E8DCEA;
+  border-radius:13px!important;
+}
+.option,.add-cost-box,.meta-box{
+  border:1px solid var(--v-line)!important;
+  background:var(--v-lilac-2)!important;
+  border-radius:12px!important;
+}
+.meta-box{padding:11px!important}
+.meta-box b{color:var(--v-muted)!important}
+.count-badge{background:var(--v-lilac)!important;color:var(--v-plum)!important;border-radius:999px!important;padding:4px 9px!important}
+.grand{
+  background:linear-gradient(135deg,#FBF1FA,#F6EDF7)!important;
+  border:1px solid #E7D7E9!important;
+  border-radius:14px!important;
+}
+.summary-product-card{border-color:var(--v-line)!important;border-radius:14px!important;overflow:hidden}
+.summary-product-collapsed.open{background:linear-gradient(135deg,#FBF3FB,#F7F0F8)!important}
+.summary-product-total,.calc-final strong,.grand strong{color:var(--v-plum)!important}
+.bill-actions button{box-shadow:0 5px 14px rgba(40,25,40,.05)}
+footer,.app-version{color:#8B858D!important}
+@media(max-width:800px){
+  .valaya-header{padding:12px 14px!important}
+  .header-pill{display:none}
+  .brand-name{font-size:18px}
+  .container{padding:12px!important;gap:12px!important}
+}
+
+
+/* ========= VALAYA STORE BRAND REFRESH v1.3 ========= */
+:root{
+  --v-green:#155B4A;
+  --v-green-2:#0E4438;
+  --v-green-3:#247761;
+  --v-sage:#E7EFEA;
+  --v-sage-2:#F3F7F4;
+  --v-cream:#FBFAF5;
+  --v-gold:#B8A06A;
+  --v-ink:#18312B;
+  --v-muted:#71807A;
+  --v-line:#DCE5E0;
+  --v-bg:#F5F4EE;
+  --v-white:#FFFFFF;
+  --v-shadow:0 10px 28px rgba(20,52,43,.08);
+}
+
+html{background:var(--v-bg)}
+body{
+  background:
+    radial-gradient(circle at 8% 0%,rgba(184,160,106,.10),transparent 24%),
+    radial-gradient(circle at 92% 0%,rgba(21,91,74,.08),transparent 28%),
+    linear-gradient(180deg,#FBFAF6 0%,#F3F3EE 100%)!important;
+  color:var(--v-ink);
+  overflow-x:hidden;
+}
+
+.valaya-header{
+  min-height:78px;
+  padding:12px 24px!important;
+  background:linear-gradient(135deg,var(--v-green-2),var(--v-green))!important;
+  border-bottom:1px solid rgba(255,255,255,.14);
+  box-shadow:0 8px 24px rgba(14,68,56,.18)!important;
+}
+.brand-lockup{min-width:0}
+.brand-mark{
+  width:46px;height:46px;border-radius:13px;
+  background:linear-gradient(145deg,#fff,var(--v-cream));
+  color:var(--v-green);
+  box-shadow:inset 0 0 0 1px rgba(184,160,106,.5),0 4px 12px rgba(0,0,0,.10);
+}
+.brand-mark:after{border-color:rgba(184,160,106,.5)}
+.brand-name{letter-spacing:2px;font-size:19px}
+.brand-subtitle{color:rgba(255,255,255,.70)}
+
+.container{
+  width:100%;
+  box-sizing:border-box;
+  grid-template-columns:minmax(270px,330px) minmax(0,1fr)!important;
+  gap:18px!important;
+  padding:18px!important;
+}
+.inventory-panel,.billing-panel,.panel,.products-box,.bill-summary-box,.order-total{
+  min-width:0;
+  box-sizing:border-box;
+}
+.panel,.products-box,.bill-summary-box,.order-total{
+  border:1px solid var(--v-line)!important;
+  border-radius:18px!important;
+  box-shadow:var(--v-shadow)!important;
+  background:rgba(255,255,255,.96)!important;
+}
+.panel{padding:16px!important}
+.billing-panel{overflow:hidden}
+
+h2,h3{color:var(--v-ink)!important}
+h2{border-bottom-color:var(--v-line)!important}
+
+input,select,textarea{
+  min-width:0;
+  max-width:100%;
+  min-height:40px;
+  border:1px solid #D4DED9!important;
+  border-radius:10px!important;
+  background:#fff!important;
+  box-sizing:border-box;
+}
+input:focus,select:focus,textarea:focus{
+  border-color:var(--v-green)!important;
+  box-shadow:0 0 0 3px rgba(21,91,74,.11)!important;
+}
+
+button{
+  box-sizing:border-box;
+  max-width:100%;
+  min-height:40px;
+  border-radius:10px!important;
+  white-space:nowrap;
+}
+.primary,.green{
+  background:linear-gradient(135deg,var(--v-green),var(--v-green-2))!important;
+  box-shadow:0 6px 14px rgba(21,91,74,.16)!important;
+}
+#btn-add-item{
+  background:linear-gradient(135deg,var(--v-green-3),var(--v-green))!important;
+}
+.gray{
+  background:#F1F3F0!important;
+  color:#315047!important;
+  border:1px solid #DDE5E1!important;
+}
+.red{box-shadow:none!important}
+
+.products-box{
+  padding:14px!important;
+  background:linear-gradient(180deg,#FFFFFF,#FBFCFA)!important;
+}
+.product-list{
+  min-width:0;
+  overflow:hidden;
+}
+.product-row{
+  min-width:0;
+  grid-template-columns:minmax(0,1fr) auto auto!important;
+  padding:9px 10px!important;
+  border:1px solid #E1E8E4!important;
+  background:#fff!important;
+  border-radius:12px!important;
+}
+.product-row > *{min-width:0}
+.product-row.selected{
+  border-color:var(--v-green)!important;
+  background:linear-gradient(135deg,#F0F6F2,#E8F0EC)!important;
+  box-shadow:0 5px 14px rgba(21,91,74,.09)!important;
+}
+.product-row .product-name{
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+.product-row .actions{
+  display:flex;
+  align-items:center;
+  gap:5px;
+  flex-wrap:nowrap;
+}
+.product-row .actions button{
+  flex:0 0 auto;
+  padding:7px 9px!important;
+  min-height:34px!important;
+}
+.count-badge{
+  background:var(--v-sage)!important;
+  color:var(--v-green)!important;
+}
+.selected-title{
+  background:linear-gradient(135deg,#F1F6F3,#E8F0EC)!important;
+  border-color:#D5E2DC!important;
+}
+.option,.add-cost-box,.meta-box{
+  border:1px solid var(--v-line)!important;
+  background:#FAFCFA!important;
+  border-radius:12px!important;
+}
+.add-cost-box{
+  overflow:hidden;
+}
+.add-cost-box select,
+.add-cost-box input,
+.add-cost-box button{
+  min-width:0;
+}
+.grand{
+  background:linear-gradient(135deg,#EEF5F1,#E4EEE9)!important;
+  border:1px solid #D3E1DB!important;
+  border-radius:13px!important;
+}
+.summary-product-card{
+  border-color:var(--v-line)!important;
+  border-radius:12px!important;
+  overflow:hidden;
+}
+.summary-product-collapsed.open{
+  background:linear-gradient(135deg,#F2F7F4,#EAF1ED)!important;
+}
+.summary-product-total,.calc-final strong,.grand strong{
+  color:var(--v-green)!important;
+}
+
+/* Prevent every major flex/grid section from forcing horizontal overflow */
+.invoice-header,
+.billing-top,
+.invoice-item-adder,
+.selected-product,
+.costing-controls,
+.add-cost-row,
+.bill-actions,
+.summary-line,
+.custom-input-wrapper{
+  min-width:0;
+}
+.invoice-header > *,
+.invoice-item-adder > *,
+.selected-product > *,
+.add-cost-row > *,
+.bill-actions > *{
+  min-width:0;
+}
+
+/* Bottom action row: equal, contained buttons */
+.bill-actions{
+  display:grid!important;
+  grid-template-columns:repeat(3,minmax(0,1fr))!important;
+  gap:8px!important;
+  width:100%;
+}
+.bill-actions button{
+  width:100%!important;
+  min-width:0!important;
+  padding:10px 8px!important;
+}
+
+/* Saved-bill table: never let action buttons push the panel wider */
+.saved-bills-section{
+  min-width:0;
+  overflow:hidden;
+}
+.saved-bills-section table{
+  width:100%!important;
+  table-layout:fixed!important;
+}
+.saved-bills-section th,
+.saved-bills-section td{
+  padding:7px 5px!important;
+  font-size:11px!important;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.saved-bills-section th:nth-child(1){width:25%}
+.saved-bills-section th:nth-child(2){width:25%}
+.saved-bills-section th:nth-child(3){width:20%}
+.saved-bills-section th:nth-child(4){width:30%}
+.saved-bills-section .action-cell{
+  display:flex!important;
+  gap:4px!important;
+  flex-wrap:wrap!important;
+  align-items:center;
+}
+.saved-bills-section .action-cell button{
+  min-height:28px!important;
+  padding:5px 7px!important;
+  font-size:10px!important;
+  flex:1 1 auto;
+}
+
+/* Inventory tables stay tidy inside the narrow control panel */
+.inventory-section{
+  min-width:0;
+  overflow:hidden;
+}
+.inventory-section table{
+  width:100%!important;
+  table-layout:fixed;
+}
+.inventory-section th,.inventory-section td{
+  padding:7px 5px!important;
+  font-size:10px!important;
+}
+.inventory-section td{
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+/* Tablet landscape: give the billing workspace priority */
+@media (min-width:701px) and (max-width:1100px){
+  .container{
+    grid-template-columns:minmax(250px,29%) minmax(0,1fr)!important;
+    padding:12px!important;
+    gap:12px!important;
+  }
+  .panel,.billing-panel{padding:13px!important}
+  .bill-actions{grid-template-columns:repeat(3,minmax(0,1fr))!important}
+  .bill-actions button{font-size:12px!important}
+}
+
+/* Smaller tablets / portrait */
+@media (max-width:700px){
+  .valaya-header{padding:10px 13px!important}
+  .brand-mark{width:40px;height:40px}
+  .brand-name{font-size:16px}
+  .brand-subtitle{font-size:9px}
+  .container{grid-template-columns:1fr!important;padding:10px!important}
+  .bill-actions{grid-template-columns:1fr!important}
+  .bill-actions button{width:100%!important}
+}
+
+/* Print remains clean and white */
+@media print{
+  body{background:#fff!important}
+  .valaya-header{background:#fff!important;color:#111!important;box-shadow:none!important}
+}
+
+</style>
+</head>
+<body>
+<header class="valaya-header">
+  <div class="brand-lockup">
+    <div class="brand-mark" aria-hidden="true"><span>V</span></div>
+    <div class="brand-copy">
+      <div class="brand-name">VALAYA STORE</div>
+      <div class="brand-subtitle">Handcrafted Bangle Billing</div>
+    </div>
+  </div>
+  <div class="header-pill">Billing Dashboard</div>
+</header>
+
+<main class="container">
+
+<section class="panel inventory-panel" id="inventory-panel">
+<div class="panel-collapse-header">
+  <div>
+    <h2 style="margin:0;border:0;padding:0">Control Panel</h2>
+    <div class="help" style="margin:3px 0 0">Materials, labor, packing & saved bills</div>
+  </div>
+  <button id="toggle-inventory" type="button" class="gray small">Collapse ◀</button>
+</div>
+
+<div class="inventory-section">
+<h3>Manage Raw Materials</h3>
+<form id="raw-form">
+<input id="rm-name" placeholder="Material Name" required>
+<select id="rm-unit" required>
+<option value="" disabled selected>Select Unit</option>
+<option>Pcs</option><option>Grm</option><option>Mtr</option><option>Reel</option>
+</select>
+<input id="rm-qty" type="number" min="0.01" step="0.01" placeholder="Total Qty in Pack" required>
+<input id="rm-cost" type="number" min="0" step="0.01" placeholder="Total Cost for Pack" required>
+<button class="primary">Add New Material</button>
+</form>
+<table><thead><tr><th>Name</th><th>Unit</th><th>₹/Unit</th><th></th></tr></thead><tbody id="raw-table"></tbody></table>
+</div>
+
+<div class="inventory-section">
+<h3>Labor Rates</h3>
+<form id="labor-form">
+<input id="labor-name" placeholder="Person Name" required>
+<input id="labor-rate" type="number" min="0" step="0.01" placeholder="Hourly Rate" required>
+<button class="primary">Add Labor</button>
+</form>
+<table><thead><tr><th>Name</th><th>₹/Hour</th><th></th></tr></thead><tbody id="labor-table"></tbody></table>
+</div>
+
+<div class="inventory-section">
+<h3>Packing Supplies</h3>
+<form id="packing-form">
+<input id="packing-name" placeholder="Item Name" required>
+<input id="packing-unit" placeholder="Unit (e.g. Pcs)" required>
+<input id="packing-price" type="number" min="0" step="0.01" placeholder="Price per Unit" required>
+<button class="primary">Add Packing</button>
+</form>
+<table><thead><tr><th>Name</th><th>Unit</th><th>₹/Unit</th><th></th></tr></thead><tbody id="packing-table"></tbody></table>
+</div>
+
+<div class="saved-bills">
+<h2>Saved Bills</h2>
+<div class="backup-row">
+  <button id="export-backup" class="gray small" type="button">💾 Export Backup</button>
+  <button id="import-backup" class="gray small" type="button">📥 Import Backup</button>
+  <input id="backup-file" type="file" accept=".json,application/json" style="display:none">
+</div>
+<button id="test-data" class="test-btn">Load Test Data</button>
+<input id="bill-search" placeholder="Search customer or invoice number...">
+<table>
+<thead><tr><th>Invoice</th><th>Customer</th><th>Total</th><th>Action</th></tr></thead>
+<tbody id="saved-table"></tbody>
+</table>
+</div>
+</section>
+
+<section class="panel">
+<h2>Invoice Creator</h2>
+
+<div class="bill-header">
+<div><label>Customer Name</label><input id="customer" placeholder="Enter customer name"></div>
+<div><label>Phone</label><input id="phone" type="tel" placeholder="Enter phone number"></div>
+<div class="full"><label>Address</label><textarea id="address" rows="2" placeholder="Enter address"></textarea></div>
+</div>
+
+<div class="bill-meta">
+<div class="meta-box"><b>Date</b><span id="date"></span></div>
+<div class="meta-box"><b>Invoice Number</b><span id="invoice"></span></div>
+</div>
+
+<div style="margin-top:10px">
+<label>Notes</label>
+<textarea id="notes" rows="2" placeholder="Special requests, delivery info..."></textarea>
+</div>
+
+<div class="billing-workspace">
+  <div class="products-box product-sidebar">
+    <div class="workspace-heading">
+      <div>
+        <h3 style="margin:0">Products</h3>
+        <div class="help">Select a product to work on it.</div>
+      </div>
+      <span id="product-count" class="count-badge">0</span>
+    </div>
+
+    <div class="add-product">
+      <input id="new-product" placeholder="Product name">
+      <button id="add-product" class="green" type="button">+ Add</button>
+    </div>
+
+    <div id="product-list" class="product-list"></div>
+  </div>
+
+  <div class="products-box costing-workspace">
+    <div id="selected-product" class="selected-product"></div>
+
+    <div class="add-cost-box">
+      <div class="add-cost-title">
+        <strong>Add Cost to This Product</strong>
+        <span class="help">Choose material/labor/packing → quantity → Add</span>
+      </div>
+      <div class="costing-controls">
+        <select id="item-type">
+          <option value="raw">Raw Material</option>
+          <option value="labor">Labor</option>
+          <option value="packing">Packing</option>
+        </select>
+        <select id="item-select"></select>
+        <input id="item-quantity" type="number" min="0.01" step="0.01" placeholder="Quantity / Hours">
+        <button id="add-item" class="green">+ Add Cost</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<select id="product-select"></select>
+
+<div class="item-list-section">
+  <div class="item-list-header">
+    <div>
+      <strong>Bill Details</strong>
+      <span id="item-count" class="item-count">0 items</span>
+    </div>
+    <button id="toggle-items" type="button" class="gray small">Hide Items ▲</button>
+  </div>
+  <div id="item-list-content">
+    <table>
+      <thead><tr><th>Product</th><th>Type</th><th>Description</th><th>Qty</th><th>Unit Price</th><th>Total</th><th></th></tr></thead>
+      <tbody id="bill-items"></tbody>
+    </table>
+  </div>
+</div>
+
+<div class="bill-summary-box combined-bill-summary">
+  <div class="bill-summary-heading">
+    <div>
+      <h3 style="margin:0">Bill Breakup</h3>
+      <span class="help" style="margin:2px 0 0">Product-wise costs and selling prices</span>
+    </div>
+    <span id="summary-product-count" class="count-badge">0</span>
+  </div>
+
+  <div id="bill-summary-products"></div>
+
+  <div class="order-total">
+    <h3 style="margin-top:0">Order Total</h3>
+    <div class="summary-line"><span>Products Total</span><strong id="products-total">₹0.00</strong></div>
+    <div class="summary-line discount-line">
+      <span>Discount <small>(products only)</small></span>
+      <div class="discount-input-wrap">
+        <select id="discount-type" title="Discount type">
+          <option value="percent">%</option>
+          <option value="amount">₹</option>
+        </select>
+        <input id="discount" type="number" min="0" step="0.01" placeholder="e.g. 10">
+      </div>
+    </div>
+    <div class="summary-line"><span>Courier <small>(added separately)</small></span><input id="courier" type="number" min="0" step="0.01" placeholder="e.g. 50"></div>
+    <div class="summary-line grand"><span>GRAND TOTAL</span><strong id="grand-total">₹0.00</strong></div>
+  </div>
+</div>
+
+<div class="bill-actions">
+<button id="save-bill" class="primary">Save Bill</button>
+<button id="whatsapp" class="whatsapp">WhatsApp Bill</button>
+<button id="print" class="primary">Print Bill</button>
+</div>
+<div class="new-bill" style="margin-top:10px">
+<button id="new-bill" class="gray" style="width:100%">Start New Bill</button>
+</div>
+</section>
+</main>
+<div class="app-version">Valaya Billing v1.3</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function(){
+"use strict";
+
+/* =========================
+   DATA
+========================= */
+const DEFAULT_INVENTORY={
+ rawMaterials:[
+  {name:"Bangles 8-cut",unit:"Pcs",price:1.67},
+  {name:"Bangles 4-cut",unit:"Pcs",price:2.50},
+  {name:"Threads",unit:"Reel",price:22},
+  {name:"Kundan (Eye shape)",unit:"Grm",price:3},
+  {name:"Kundan (Square shape)",unit:"Grm",price:2.70},
+  {name:"White stones",unit:"Grm",price:3},
+  {name:"Kundan (Drop shape)",unit:"Grm",price:1.25},
+  {name:"Square stones",unit:"Grm",price:2},
+  {name:"Glass bangles",unit:"Pcs",price:10}
+ ],
+ labor:[
+  {name:"Tanuja",rate:50},
+  {name:"Kris",rate:200},
+  {name:"Bhri",rate:200}
+ ],
+ packing:[
+  {name:"Box",unit:"Pcs",price:30},
+  {name:"Wrapping cover",unit:"Mtr",price:4},
+  {name:"Stickers",unit:"Pcs",price:4.25},
+  {name:"Normal handover cover",unit:"Pcs",price:1}
+ ],
+ savedBills:[]
+};
+
+let inventory;
+let billCounter=0;
+let current={
+ products:[],
+ customer:"",
+ phone:"",
+ address:"",
+ notes:"",
+ date:"",
+ invoice:"",
+ courier:0,
+ discount:0
+};
+
+const $=id=>document.getElementById(id);
+const money=n=>"₹"+Number(n||0).toFixed(2);
+
+function clone(x){return JSON.parse(JSON.stringify(x));}
+
+function loadStorage(){
+ try{
+  const data=localStorage.getItem("valayaStoreBilling_v1");
+  const counter=localStorage.getItem("valayaStoreBillCounter_v1");
+  inventory=data?JSON.parse(data):clone(DEFAULT_INVENTORY);
+  inventory.rawMaterials=Array.isArray(inventory.rawMaterials)?inventory.rawMaterials:clone(DEFAULT_INVENTORY.rawMaterials);
+  inventory.labor=Array.isArray(inventory.labor)?inventory.labor:clone(DEFAULT_INVENTORY.labor);
+  inventory.packing=Array.isArray(inventory.packing)?inventory.packing:clone(DEFAULT_INVENTORY.packing);
+  inventory.savedBills=Array.isArray(inventory.savedBills)?inventory.savedBills:[];
+  billCounter=counter?parseInt(counter,10)||0:0;
+ }catch(e){
+  inventory=clone(DEFAULT_INVENTORY);
+  billCounter=0;
+ }
+}
+function saveStorage(){
+ localStorage.setItem("valayaStoreBilling_v1",JSON.stringify(inventory));
+ localStorage.setItem("valayaStoreBillCounter_v1",String(billCounter));
+}
+
+/* =========================
+   INVENTORY
+========================= */
+function deleteInventory(type,index){
+ if(!confirm("Delete this inventory item?"))return;
+ inventory[type].splice(index,1);
+ saveStorage();
+ renderInventory();
+ updateItemSelect();
+}
+function renderInventory(){
+ const raw=$("raw-table"), labor=$("labor-table"), packing=$("packing-table");
+ raw.innerHTML="";
+ inventory.rawMaterials.forEach((x,i)=>{
+  const r=raw.insertRow();
+  r.innerHTML=`<td>${escape(x.name)}</td><td>${escape(x.unit)}</td><td>${money(x.price)}</td><td><button class="red small" onclick="deleteInventoryItem('rawMaterials',${i})">×</button></td>`;
+ });
+ labor.innerHTML="";
+ inventory.labor.forEach((x,i)=>{
+  const r=labor.insertRow();
+  r.innerHTML=`<td>${escape(x.name)}</td><td>${money(x.rate)}</td><td><button class="red small" onclick="deleteInventoryItem('labor',${i})">×</button></td>`;
+ });
+ packing.innerHTML="";
+ inventory.packing.forEach((x,i)=>{
+  const r=packing.insertRow();
+  r.innerHTML=`<td>${escape(x.name)}</td><td>${escape(x.unit)}</td><td>${money(x.price)}</td><td><button class="red small" onclick="deleteInventoryItem('packing',${i})">×</button></td>`;
+ });
+}
+window.deleteInventoryItem=deleteInventory;
+
+$("raw-form").addEventListener("submit",e=>{
+ e.preventDefault();
+ const qty=parseFloat($("rm-qty").value), cost=parseFloat($("rm-cost").value);
+ if(qty<=0){alert("Quantity must be greater than 0.");return;}
+ inventory.rawMaterials.push({name:$("rm-name").value.trim(),unit:$("rm-unit").value,price:cost/qty});
+ saveStorage();renderInventory();updateItemSelect();e.target.reset();
+});
+$("labor-form").addEventListener("submit",e=>{
+ e.preventDefault();
+ inventory.labor.push({name:$("labor-name").value.trim(),rate:parseFloat($("labor-rate").value)||0});
+ saveStorage();renderInventory();updateItemSelect();e.target.reset();
+});
+$("packing-form").addEventListener("submit",e=>{
+ e.preventDefault();
+ inventory.packing.push({name:$("packing-name").value.trim(),unit:$("packing-unit").value,price:parseFloat($("packing-price").value)||0});
+ saveStorage();renderInventory();updateItemSelect();e.target.reset();
+});
+
+/* =========================
+   PRODUCTS
+========================= */
+function newProduct(name){
+ return {
+  id:"p_"+Date.now()+"_"+Math.random().toString(36).slice(2),
+  name:name,
+  items:[],
+  expense:0.10,
+  customExpense:"",
+  profit:0.20,
+  customProfit:""
+ };
+}
+function calculateProduct(product){
+ let raw=0,wages=0,packing=0;
+ product.items.forEach(item=>{
+  if(item.type==="raw")raw+=Number(item.total)||0;
+  if(item.type==="labor")wages+=Number(item.total)||0;
+  if(item.type==="packing")packing+=Number(item.total)||0;
+ });
+ const expensePercent=product.expense==="custom"?(parseFloat(product.customExpense)||0)/100:Number(product.expense)||0;
+ const profitPercent=product.profit==="custom"?(parseFloat(product.customProfit)||0)/100:Number(product.profit)||0;
+ const subtotal=raw+wages+packing;
+ const other=raw*expensePercent;
+ const making=subtotal+other;
+ const profit=making*profitPercent;
+ const price=making+profit;
+ return {raw,wages,packing,subtotal,other,making,profit,price,expensePercent,profitPercent};
+}
+
+function renderProducts(){
+ const list=$("product-list");
+ list.innerHTML="";
+ $("product-count").textContent=current.products.length;
+
+ if(current.products.length===0){
+  list.innerHTML='<div class="empty">No products yet. Enter a product name above and click + Add.</div>';
+  return;
+ }
+
+ current.products.forEach((p,i)=>{
+  if(p.expense===undefined)p.expense="0.10";
+  if(p.profit===undefined)p.profit="0.20";
+  if(p.customExpense===undefined)p.customExpense="";
+  if(p.customProfit===undefined)p.customProfit="";
+
+  const row=document.createElement("div");
+  row.className="product-row"+(p.id===current.selectedId?" selected":"");
+  row.onclick=(e)=>{
+   if(e.target.tagName==="BUTTON")return;
+   selectProduct(p.id);
+  };
+
+  const name=document.createElement("div");
+  name.className="product-name";
+  name.textContent=(i+1)+". "+p.name;
+
+  const calc=calculateProduct(p);
+  const price=document.createElement("div");
+  price.className="product-price";
+  price.textContent=money(calc.price);
+
+  const actions=document.createElement("div");
+  actions.className="actions";
+
+  const select=document.createElement("button");
+  select.className=p.id===current.selectedId?"green small":"gray small";
+  select.textContent=p.id===current.selectedId?"Selected":"Select";
+  select.onclick=()=>selectProduct(p.id);
+
+  const remove=document.createElement("button");
+  remove.className="red small";
+  remove.textContent="×";
+  remove.title="Remove product";
+  remove.onclick=()=>{
+   if(!confirm("Remove "+p.name+" from this bill?"))return;
+   current.products=current.products.filter(x=>x.id!==p.id);
+   if(current.selectedId===p.id)current.selectedId=current.products[0]?.id||null;
+   renderProducts();renderSelectedProduct();updateItemSelect();renderBillItems();calculateOrder();
+  };
+
+  actions.append(select,remove);
+  row.append(name,price,actions);
+  list.appendChild(row);
+ });
+}
+
+function selectProduct(id){
+ current.selectedId=id;
+ renderProducts();
+ renderSelectedProduct();
+ updateItemSelect();
+ renderBillItems();
+}
+
+function renderSelectedProduct(){
+ const box=$("selected-product");
+ const p=current.products.find(x=>x.id===current.selectedId);
+ box.innerHTML="";
+ if(!p)return;
+
+ const title=document.createElement("div");
+ title.className="selected-title";
+ title.innerHTML=`<strong>${escape(p.name)}</strong><span class="help" style="margin:0">${p.items.length} cost item${p.items.length===1?"":"s"}</span>`;
+ box.appendChild(title);
+
+ const calc=calculateProduct(p);
+
+ const calculation=document.createElement("div");
+ calculation.className="calculation";
+
+ const percentageBox=document.createElement("div");
+ percentageBox.className="billing-breakup-options";
+ percentageBox.innerHTML=`
+   <div><label>Other Expenses</label><select id="selected-expense">
+     <option value="0.05">5%</option><option value="0.10">10%</option>
+     <option value="0.15">15%</option><option value="0.20">20%</option>
+     <option value="custom">Other...</option>
+   </select></div>
+   <div><label>Profit</label><select id="selected-profit">
+     <option value="0.10">10%</option><option value="0.15">15%</option>
+     <option value="0.20">20%</option><option value="0.25">25%</option>
+     <option value="0.30">30%</option><option value="0.40">40%</option>
+     <option value="0.50">50%</option><option value="custom">Other...</option>
+   </select></div>`;
+ const expenseSelect=percentageBox.querySelector("#selected-expense");
+ const profitSelect=percentageBox.querySelector("#selected-profit");
+ expenseSelect.value=p.expense;
+ profitSelect.value=p.profit;
+
+ expenseSelect.onchange=()=>{
+   p.expense=expenseSelect.value;
+   if(p.expense==="custom"){
+     const v=prompt("Enter Other Expenses percentage:",p.customExpense||"");
+     if(v===null){p.expense="0.10";} else {p.customExpense=v;}
+   }
+   renderProducts();renderSelectedProduct();renderBillSummary();calculateOrder();
+ };
+ profitSelect.onchange=()=>{
+   p.profit=profitSelect.value;
+   if(p.profit==="custom"){
+     const v=prompt("Enter Profit percentage:",p.customProfit||"");
+     if(v===null){p.profit="0.20";} else {p.customProfit=v;}
+   }
+   renderProducts();renderSelectedProduct();renderBillSummary();calculateOrder();
+ };
+ calculation.appendChild(percentageBox);
+
+ const calcLines=document.createElement("div");
+ calcLines.innerHTML=`
+  <div class="calc-line"><span>Raw Material</span><strong>${money(calc.raw)}</strong></div>
+  <div class="calc-line"><span>Wages</span><strong>${money(calc.wages)}</strong></div>
+  <div class="calc-line"><span>Packing</span><strong>${money(calc.packing)}</strong></div>
+  <div class="calc-line calc-total"><span>Subtotal</span><strong>${money(calc.subtotal)}</strong></div>
+  <div class="calc-line"><span>Other Expenses (${p.expense==="custom"?(p.customExpense||0):calc.expensePercent*100}%)</span><strong>${money(calc.other)}</strong></div>
+  <div class="calc-line calc-total"><span>Making Cost</span><strong>${money(calc.making)}</strong></div>
+  <div class="calc-line"><span>Profit (${p.profit==="custom"?(p.customProfit||0):calc.profitPercent*100}%)</span><strong>${money(calc.profit)}</strong></div>
+  <div class="calc-line calc-final"><span>Product Price</span><strong>${money(calc.price)}</strong></div>`;
+ calculation.appendChild(calcLines);
+ box.appendChild(calculation);
+}
+
+function refreshCurrent(renderAll=true){
+ if(renderAll){renderProducts();renderSelectedProduct();}
+ else {renderSelectedProduct();}
+ renderBillItems();calculateOrder();
+}
+
+/* =========================
+   COSTING ITEMS
+========================= */
+function updateItemSelect(){
+ const type=$("item-type").value;
+ let data=type==="raw"?inventory.rawMaterials:type==="labor"?inventory.labor:inventory.packing;
+ $("item-select").innerHTML="";
+ data.forEach((x,i)=>{
+  const o=document.createElement("option");
+  o.value=i;
+  o.textContent=x.name+(type==="labor"?" (Hours)":" ("+x.unit+")");
+  $("item-select").appendChild(o);
+ });
+}
+$("item-type").addEventListener("change",updateItemSelect);
+
+$("add-item").addEventListener("click",()=>{
+ const p=current.products.find(x=>x.id===current.selectedId);
+ if(!p){alert("Add and select a product first.");return;}
+ const index=$("item-select").value;
+ const qty=parseFloat($("item-quantity").value);
+ if(index===""||!qty||qty<=0){alert("Select an item and enter a valid quantity.");return;}
+ const type=$("item-type").value;
+ let source,price,description;
+ if(type==="raw"){source=inventory.rawMaterials[index];price=source.price;description=source.name+" ("+source.unit+")";}
+ else if(type==="labor"){source=inventory.labor[index];price=source.rate;description=source.name+" (Hours)";}
+ else{source=inventory.packing[index];price=source.price;description=source.name+" ("+source.unit+")";}
+ p.items.push({type,description,quantity:qty,unitPrice:price,total:qty*price});
+ $("item-quantity").value="";
+ refreshCurrent();
+});
+
+function renderBillItems(){
+ const body=$("bill-items");
+ body.innerHTML="";
+ const totalItems=current.products.reduce((sum,p)=>sum+p.items.length,0);
+ $("item-count").textContent=totalItems+" item"+(totalItems===1?"":"s");
+ current.products.forEach(p=>{
+  p.items.forEach((item,i)=>{
+   const r=body.insertRow();
+   r.insertCell().textContent=p.name;
+   r.insertCell().textContent=item.type==="raw"?"RAW MATERIAL":item.type.toUpperCase();
+   r.insertCell().textContent=item.description;
+   r.insertCell().textContent=item.quantity;
+   r.insertCell().textContent=money(item.unitPrice);
+   r.insertCell().textContent=money(item.total);
+   const c=r.insertCell();
+   const b=document.createElement("button");
+   b.className="red small";b.textContent="×";
+   b.onclick=()=>{
+    p.items.splice(i,1);
+    refreshCurrent();
+   };
+   c.appendChild(b);
+  });
+ });
+}
+
+function renderBillSummary(){
+ const container=$("bill-summary-products");
+ container.innerHTML="";
+ $("summary-product-count").textContent=current.products.length;
+
+ current.products.forEach((p,i)=>{
+  const c=calculateProduct(p);
+
+  const card=document.createElement("div");
+  card.className="summary-product-card";
+
+  const header=document.createElement("div");
+  header.className="summary-product-collapsed";
+  header.innerHTML=`
+    <span class="summary-product-name">${i+1}. ${escape(p.name)}</span>
+    <span class="summary-product-total">${money(c.price)}</span>
+    <span class="summary-chevron">▶</span>`;
+
+  const details=document.createElement("div");
+  details.className="summary-product-details";
+  details.style.display="none";
+
+  // Itemised costing grouped by type.
+  const groups=[
+    ["raw","Raw Materials"],
+    ["labor","Wages"],
+    ["packing","Packing"]
+  ];
+
+  let itemHtml="";
+  groups.forEach(([type,label])=>{
+    const items=p.items.filter(x=>x.type===type);
+    if(!items.length)return;
+
+    itemHtml+=`<div class="summary-group-title">${label}</div>`;
+    items.forEach(item=>{
+      itemHtml+=`
+        <div class="summary-item-line">
+          <span>${escape(item.description)}</span>
+          <span>${item.quantity} × ${money(item.unitPrice)}</span>
+          <strong>${money(item.total)}</strong>
+        </div>`;
+    });
+  });
+
+  details.innerHTML=`
+    <div class="summary-items">${itemHtml || '<div class="empty">No costing items added.</div>'}</div>
+    <div class="summary-calculation">
+      <div><span>Raw Material</span><strong>${money(c.raw)}</strong></div>
+      <div><span>Wages</span><strong>${money(c.wages)}</strong></div>
+      <div><span>Packing</span><strong>${money(c.packing)}</strong></div>
+      <div class="summary-line-strong"><span>Subtotal</span><strong>${money(c.subtotal)}</strong></div>
+      <div><span>Other Expenses (${p.expense==="custom"?(p.customExpense||0):c.expensePercent*100}%)</span><strong>${money(c.other)}</strong></div>
+      <div class="summary-line-strong"><span>Making Cost</span><strong>${money(c.making)}</strong></div>
+      <div><span>Profit (${p.profit==="custom"?(p.customProfit||0):c.profitPercent*100}%)</span><strong>${money(c.profit)}</strong></div>
+      <div class="summary-product-price"><span>Product Price</span><strong>${money(c.price)}</strong></div>
+    </div>`;
+
+  header.onclick=()=>{
+    const open=details.style.display!=="none";
+    details.style.display=open?"none":"block";
+    header.classList.toggle("open",!open);
+    header.querySelector(".summary-chevron").textContent=open?"▶":"▼";
+  };
+
+  card.append(header,details);
+  container.appendChild(card);
+ });
+}
+
+/* =========================
+   ORDER TOTAL
+========================= */
+function calculateOrder(){
+ renderBillSummary();
+ const productsTotal=current.products.reduce((sum,p)=>sum+calculateProduct(p).price,0);
+ const courier=Math.max(0,parseFloat($("courier").value)||0);
+ const enteredDiscount=Math.max(0,parseFloat($("discount").value)||0);
+ const discountType=$("discount-type").value;
+
+ // Discount applies ONLY to products. Courier is always added separately.
+ // Percentage discount is calculated from Products Total.
+ const discount=discountType==="percent"
+   ? Math.min(productsTotal,(productsTotal*enteredDiscount)/100)
+   : Math.min(productsTotal,enteredDiscount);
+ const grand=productsTotal-discount+courier;
+
+ $("products-total").textContent=money(productsTotal);
+ $("grand-total").textContent=money(grand);
+ return {productsTotal,courier,discount,grand};
+}
+$("courier").addEventListener("input",()=>{current.courier=parseFloat($("courier").value)||0;calculateOrder();});
+$("discount").addEventListener("input",()=>{current.discount=parseFloat($("discount").value)||0;calculateOrder();});
+$("discount-type").addEventListener("change",()=>{
+  $("discount").value="";
+  calculateOrder();
+});
+
+/* =========================
+   BILLS
+========================= */
+function setupNewBill(increment=true){
+ if(increment)billCounter++;
+ current={
+  products:[newProduct("Product 1")],
+  selectedId:null,
+  customer:"",
+  phone:"",
+  address:"",
+  notes:"",
+  date:new Date().toLocaleDateString("en-GB"),
+  invoice:"VAL-"+String(billCounter).padStart(6,"0"),
+  courier:0,
+  discount:0,
+  discountType:"percent"
+ };
+ current.selectedId=current.products[0].id;
+ $("customer").value="";$("phone").value="";$("address").value="";$("notes").value="";
+ $("courier").value="";$("discount").value="";$("discount-type").value="percent";
+ $("date").textContent=current.date;$("invoice").textContent=current.invoice;
+ renderProducts();renderSelectedProduct();updateItemSelect();renderBillItems();calculateOrder();
+}
+
+function billObject(){
+ const order=calculateOrder();
+ return {
+  products:clone(current.products),
+  details:{
+   invoice:current.invoice,
+   customer:$("customer").value.trim(),
+   phone:$("phone").value.trim(),
+   address:$("address").value.trim(),
+   notes:$("notes").value,
+   date:current.date,
+   courier:order.courier,
+   discount:order.discount,
+   discountType:$("discount-type").value,
+   discountInput:parseFloat($("discount").value)||0,
+   productsTotal:order.productsTotal,
+   grand:order.grand
+  }
+ };
+}
+function saveBill(silent=false){
+ if(current.products.length===0){alert("Add at least one product.");return null;}
+ if(current.products.some(p=>p.items.length===0)){
+  if(!confirm("One or more products have no costing items. Save anyway?"))return null;
+ }
+ const bill=billObject();
+ const index=inventory.savedBills.findIndex(b=>b.details.invoice===bill.details.invoice);
+ if(index>=0)inventory.savedBills[index]=bill;
+ else inventory.savedBills.push(bill);
+ saveStorage();renderSavedBills();
+ if(!silent)alert("Bill "+bill.details.invoice+" saved successfully.");
+ return bill;
+}
+function loadBill(bill){
+ current={
+  products:clone(bill.products||[]),
+  selectedId:(bill.products&&bill.products[0])?bill.products[0].id:null,
+  customer:bill.details.customer||"",
+  phone:bill.details.phone||"",
+  address:bill.details.address||"",
+  notes:bill.details.notes||"",
+  date:bill.details.date||"",
+  invoice:bill.details.invoice||"VAL-000000",
+  courier:Number(bill.details.courier)||0,
+  discount:Number(bill.details.discountInput ?? bill.details.discount)||0,
+  discountType:bill.details.discountType||"amount"
+ };
+ if(current.products.length===0)current.products=[newProduct("Product 1")],current.selectedId=current.products[0].id;
+ current.products.forEach(p=>{
+  if(p.expense===undefined)p.expense="0.10";
+  if(p.profit===undefined)p.profit="0.20";
+  if(!Array.isArray(p.items))p.items=[];
+ });
+ $("customer").value=current.customer;$("phone").value=current.phone;$("address").value=current.address;$("notes").value=current.notes;
+ $("courier").value=current.courier||"";
+ $("discount").value=current.discount||"";
+ $("discount-type").value=current.discountType||"amount";
+ $("date").textContent=current.date;$("invoice").textContent=current.invoice;
+ renderProducts();renderSelectedProduct();updateItemSelect();renderBillItems();calculateOrder();
+ window.scrollTo({top:0,behavior:"smooth"});
+}
+function renderSavedBills(){
+ const body=$("saved-table"),q=$("bill-search").value.toLowerCase();
+ body.innerHTML="";
+ inventory.savedBills.slice().reverse().filter(b=>{
+  return (b.details.customer||"").toLowerCase().includes(q)||(b.details.invoice||"").toLowerCase().includes(q);
+ }).forEach(bill=>{
+  const r=body.insertRow();
+  r.insertCell().textContent=bill.details.invoice;
+  r.insertCell().textContent=bill.details.customer||"-";
+  r.insertCell().textContent=money(bill.details.grand);
+  const c=r.insertCell();c.className="saved-actions";
+  const edit=document.createElement("button");edit.className="gray small";edit.textContent="Edit";edit.onclick=()=>loadBill(bill);
+  const wa=document.createElement("button");wa.className="whatsapp small";wa.textContent="WhatsApp";wa.onclick=()=>openWhatsApp(bill);
+  const del=document.createElement("button");del.className="red small";del.textContent="Delete";del.onclick=()=>{
+   if(!confirm("Delete "+bill.details.invoice+"? This cannot be undone."))return;
+   const i=inventory.savedBills.indexOf(bill);
+   if(i>=0){inventory.savedBills.splice(i,1);saveStorage();renderSavedBills();}
+  };
+  c.append(edit,wa,del);
+ });
+}
+$("bill-search").addEventListener("input",renderSavedBills);
+
+let itemsExpanded=true;
+$("toggle-items").addEventListener("click",()=>{
+ itemsExpanded=!itemsExpanded;
+ $("item-list-content").style.display=itemsExpanded?"block":"none";
+ $("toggle-items").textContent=itemsExpanded?"Hide Items ▲":"Show Items ▼";
+});
+
+/* =========================
+   WHATSAPP
+========================= */
+function whatsappLines(bill){
+ return (bill.products||[]).map(p=>({name:p.name,price:calculateProduct(p).price}));
+}
+function whatsappMessage(bill){
+ const d=bill.details;
+ const lines=whatsappLines(bill);
+ const total=lines.reduce((s,x)=>s+x.price,0);
+ let msg="*VALAYA STORE*\n";
+ msg+="━━━━━━━━━━━━━━━━━━\n\n";
+ msg+="*Invoice:* "+d.invoice+"\n";
+ msg+="*Date:* "+d.date+"\n";
+ msg+="*Customer:* "+(d.customer||"-")+"\n";
+ msg+="*Phone:* "+(d.phone||"-")+"\n";
+ msg+="*Address:* "+(d.address||"-")+"\n";
+ msg+="\n━━━━━━━━━━━━━━━━━━\n\n";
+ msg+="*PRODUCTS*\n\n";
+ lines.forEach((x,i)=>msg+=(i+1)+". "+x.name+" — "+money(x.price)+"\n");
+ msg+="\n━━━━━━━━━━━━━━━━━━\n";
+ msg+="Products Total: "+money(total)+"\n";
+ msg+="Discount: - "+money(d.discount)+"\n";
+ msg+="Courier: + "+money(d.courier)+"\n";
+ msg+="*GRAND TOTAL: "+money(d.grand)+"*\n";
+ msg+="━━━━━━━━━━━━━━━━━━\n\n";
+ msg+="Thank you for your order!\n";
+ msg+="We truly appreciate your support.\n\n";
+ msg+="*Discover more handcrafted designs:*\n";
+ msg+="https://www.instagram.com/valaya_store/\n\n";
+ msg+="Follow @valaya_store for new designs, launches & updates.";
+ return msg;
+}
+function openWhatsApp(bill){
+ const text=encodeURIComponent(whatsappMessage(bill));
+ const phone=String(bill.details.phone||"").replace(/\D/g,"");
+ const url=phone?"https://wa.me/"+phone+"?text="+text:"https://wa.me/?text="+text;
+ window.open(url,"_blank");
+}
+$("whatsapp").addEventListener("click",()=>{
+ const bill=saveBill(true);
+ if(bill)openWhatsApp(bill);
+});
+
+/* =========================
+   TEST DATA
+========================= */
+function testItem(type,description,qty,unitPrice){
+ return {type,description,quantity:qty,unitPrice,total:qty*unitPrice};
+}
+function createTestBill(invoice,customer,products,courier,discount){
+ const ps=products.map((p,i)=>{
+  const x=newProduct(p.name);
+  x.id="test_"+invoice+"_"+i;
+  x.items=p.items;
+  x.expense="0.10";x.profit="0.20";
+  return x;
+ });
+ const productsTotal=ps.reduce((s,p)=>s+calculateProduct(p).price,0);
+ return {
+  products:ps,
+  details:{
+   invoice,customer,phone:"9738285473",address:"Test Address, Bengaluru",
+   notes:"TEST DATA - safe to delete",date:new Date().toLocaleDateString("en-GB"),
+   courier,discount,discountType:"amount",discountInput:discount,productsTotal,grand:Math.max(0,productsTotal+courier-discount)
+  }
+ };
+}
+function loadTestData(){
+ const raw1=inventory.rawMaterials.find(x=>x.name==="Bangles 8-cut")||{name:"Bangles 8-cut",unit:"Pcs",price:1.67};
+ const kundan=inventory.rawMaterials.find(x=>x.name==="Kundan (Eye shape)")||{name:"Kundan (Eye shape)",unit:"Grm",price:3};
+ const stones=inventory.rawMaterials.find(x=>x.name==="White stones")||{name:"White stones",unit:"Grm",price:3};
+ const tanuja=inventory.labor.find(x=>x.name==="Tanuja")||{name:"Tanuja",rate:50};
+ const kris=inventory.labor.find(x=>x.name==="Kris")||{name:"Kris",rate:200};
+ const box=inventory.packing.find(x=>x.name==="Box")||{name:"Box",unit:"Pcs",price:30};
+
+ const bill1=createTestBill("VAL-TEST-001","Kiran (TEST)",[
+  {name:"Red Stone Bangle",items:[
+   testItem("raw",raw1.name+" ("+raw1.unit+")",100,raw1.price),
+   testItem("raw",kundan.name+" ("+kundan.unit+")",20,kundan.price),
+   testItem("labor",tanuja.name+" (Hours)",2,tanuja.rate),
+   testItem("packing",box.name+" ("+box.unit+")",1,box.price)]},
+  {name:"Green Kundan Bangle",items:[
+   testItem("raw",raw1.name+" ("+raw1.unit+")",80,raw1.price),
+   testItem("raw",stones.name+" ("+stones.unit+")",15,stones.price),
+   testItem("labor",kris.name+" (Hours)",1,kris.rate)]},
+  {name:"Bridal Bangle Set",items:[
+   testItem("raw",kundan.name+" ("+kundan.unit+")",30,kundan.price),
+   testItem("raw",stones.name+" ("+stones.unit+")",20,stones.price),
+   testItem("labor",tanuja.name+" (Hours)",3,tanuja.rate),
+   testItem("packing",box.name+" ("+box.unit+")",1,box.price)]}
+ ],50,100);
+
+ const bill2=createTestBill("VAL-TEST-002","Priya (TEST)",[
+  {name:"Gold Bangle",items:[
+   testItem("raw",raw1.name+" ("+raw1.unit+")",100,raw1.price),
+   testItem("raw",kundan.name+" ("+kundan.unit+")",25,kundan.price),
+   testItem("labor",kris.name+" (Hours)",1,kris.rate)]},
+  {name:"Stone Bangle",items:[
+   testItem("raw",stones.name+" ("+stones.unit+")",20,stones.price),
+   testItem("labor",tanuja.name+" (Hours)",2,tanuja.rate),
+   testItem("packing",box.name+" ("+box.unit+")",1,box.price)]}
+ ],0,0);
+
+ inventory.savedBills=inventory.savedBills.filter(b=>!(b.details.invoice||"").startsWith("VAL-TEST-"));
+ inventory.savedBills.push(bill1,bill2);
+ saveStorage();renderSavedBills();loadBill(bill1);
+ alert("Test data loaded. A 3-product bill is open. You can edit, save, WhatsApp and delete the TEST bills.");
+}
+$("test-data").addEventListener("click",loadTestData);
+
+/* =========================
+   PANEL COLLAPSE + BACKUP
+========================= */
+let inventoryExpanded=true;
+$("toggle-inventory").addEventListener("click",()=>{
+ inventoryExpanded=!inventoryExpanded;
+ $("inventory-panel").classList.toggle("collapsed",!inventoryExpanded);
+ document.querySelector(".container").classList.toggle("inventory-collapsed",!inventoryExpanded);
+ $("toggle-inventory").textContent=inventoryExpanded?"Collapse ◀":"Open ▶";
+});
+
+$("export-backup").addEventListener("click",()=>{
+ try{
+  // Save the latest current bill values before exporting, without creating a bill.
+  const backup={
+   backupVersion:1,
+   exportedAt:new Date().toISOString(),
+   appVersion:"1.0",
+   inventory:clone(inventory),
+   billCounter:billCounter
+  };
+  const blob=new Blob([JSON.stringify(backup,null,2)],{type:"application/json"});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement("a");
+  const date=new Date().toISOString().slice(0,10);
+  a.href=url;
+  a.download="valaya-billing-backup-"+date+".json";
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+  alert("Backup exported successfully.");
+ }catch(e){
+  alert("Could not export the backup. Please try again.");
+ }
+});
+
+$("import-backup").addEventListener("click",()=>{
+ $("backup-file").click();
+});
+
+$("backup-file").addEventListener("change",e=>{
+ const file=e.target.files[0];
+ if(!file)return;
+ const reader=new FileReader();
+ reader.onload=()=>{
+  try{
+   const backup=JSON.parse(reader.result);
+   const data=backup.inventory||backup;
+   if(!data || !Array.isArray(data.rawMaterials) || !Array.isArray(data.labor) ||
+      !Array.isArray(data.packing) || !Array.isArray(data.savedBills)){
+    throw new Error("Invalid backup");
+   }
+
+   if(!confirm(
+     "Import this backup?\\n\\nThis will replace the bills, materials, labor and packing currently stored in this browser."
+   )){
+    e.target.value="";
+    return;
+   }
+
+   inventory={
+    rawMaterials:clone(data.rawMaterials),
+    labor:clone(data.labor),
+    packing:clone(data.packing),
+    savedBills:clone(data.savedBills)
+   };
+   billCounter=parseInt(backup.billCounter,10)||0;
+   saveStorage();
+   renderInventory();
+   renderSavedBills();
+   alert("Backup imported successfully. Your saved data has been restored.");
+  }catch(err){
+   alert("This file is not a valid Valaya Billing backup.");
+  }
+  e.target.value="";
+ };
+ reader.readAsText(file);
+});
+
+/* =========================
+   BUTTONS / INIT
+========================= */
+$("save-bill").addEventListener("click",()=>saveBill(false));
+$("print").addEventListener("click",()=>window.print());
+$("new-bill").addEventListener("click",()=>{
+ if(confirm("Start a new bill? Unsaved changes will be lost."))setupNewBill(true);
+});
+function escape(value){
+ const div=document.createElement("div");
+ div.textContent=String(value??"");
+ return div.innerHTML;
+}
+
+loadStorage();
+renderInventory();
+renderSavedBills();
+setupNewBill(true);
+});
+</script>
+</body>
+</html>
