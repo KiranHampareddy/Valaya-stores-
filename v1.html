@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -1106,6 +1107,57 @@ button{
   .valaya-header{background:#fff!important;color:#111!important;box-shadow:none!important}
 }
 
+
+/* ===== FINAL FIXES v1.4 ===== */
+@media(min-width:701px){
+  .container.inventory-collapsed{grid-template-columns:minmax(0,1fr)!important;}
+  .container.inventory-collapsed .inventory-panel{
+    width:0!important;min-width:0!important;height:0!important;padding:0!important;margin:0!important;
+    border:0!important;box-shadow:none!important;background:transparent!important;overflow:visible!important;
+  }
+  .container.inventory-collapsed .inventory-panel .panel-collapse-header{
+    position:fixed!important;left:10px!important;top:96px!important;z-index:1000!important;
+    width:auto!important;margin:0!important;padding:0!important;border:0!important;justify-content:flex-start!important;
+  }
+  .container.inventory-collapsed .inventory-panel .panel-collapse-header > div{display:none!important;}
+  .container.inventory-collapsed #toggle-inventory{
+    width:auto!important;min-width:78px!important;min-height:42px!important;padding:8px 11px!important;
+    font-size:12px!important;box-shadow:0 5px 14px rgba(20,52,43,.14);
+  }
+}
+@media(max-width:700px){
+  .container.inventory-collapsed{grid-template-columns:minmax(0,1fr)!important;}
+  .inventory-panel.collapsed{
+    width:0!important;min-width:0!important;height:0!important;padding:0!important;margin:0!important;
+    border:0!important;box-shadow:none!important;background:transparent!important;overflow:visible!important;
+  }
+  .inventory-panel.collapsed .panel-collapse-header{
+    position:fixed!important;left:8px!important;top:82px!important;z-index:1000!important;
+    width:auto!important;margin:0!important;padding:0!important;border:0!important;
+  }
+  .inventory-panel.collapsed .panel-collapse-header > div{display:none!important;}
+  .inventory-panel.collapsed #toggle-inventory{
+    min-width:72px!important;min-height:40px!important;padding:7px 10px!important;font-size:11px!important;
+    box-shadow:0 5px 14px rgba(20,52,43,.14);
+  }
+}
+@media print{
+  @page{margin:10mm;size:auto;}
+  .container{display:block!important;padding:0!important;max-width:none!important;}
+  .inventory-panel,.billing-workspace,.bill-actions,.new-bill,.add-cost-box,.item-list-header button,
+  .panel-collapse-header,#toggle-items,.no-print{display:none!important;}
+  .bill-header,.bill-meta{display:grid!important;}
+  .item-list-section{display:block!important;border:1px solid #ccc!important;overflow:visible!important;}
+  #item-list-content{display:block!important;}
+  .item-list-section table{display:table!important;width:100%!important;font-size:10px!important;table-layout:auto!important;}
+  .item-list-section th,.item-list-section td{padding:5px!important;}
+  .summary-product-details{display:block!important;}
+  .summary-chevron{display:none!important;}
+  .summary-product-card{break-inside:avoid;page-break-inside:avoid;}
+  .bill-summary-box{box-shadow:none!important;border:1px solid #ccc!important;}
+  .order-total{box-shadow:none!important;}
+}
+
 </style>
 </head>
 <body>
@@ -1174,7 +1226,7 @@ button{
   <button id="import-backup" class="gray small" type="button">📥 Import Backup</button>
   <input id="backup-file" type="file" accept=".json,application/json" style="display:none">
 </div>
-<button id="test-data" class="test-btn">Load Test Data</button>
+<button id="test-data" type="button" class="test-btn">Load Test Data</button>
 <input id="bill-search" placeholder="Search customer or invoice number...">
 <table>
 <thead><tr><th>Invoice</th><th>Customer</th><th>Total</th><th>Action</th></tr></thead>
@@ -1299,7 +1351,7 @@ button{
 </div>
 </section>
 </main>
-<div class="app-version">Valaya Billing v1.3</div>
+<div class="app-version">Valaya Billing v1.4</div>
 
 <script>
 document.addEventListener("DOMContentLoaded", function(){
@@ -1508,6 +1560,20 @@ function renderProducts(){
   list.appendChild(row);
  });
 }
+
+$("add-product").addEventListener("click",()=>{
+  const name=$("new-product").value.trim();
+  if(!name){alert("Enter a product name first.");$("new-product").focus();return;}
+  const p=newProduct(name);
+  current.products.push(p);
+  current.selectedId=p.id;
+  $("new-product").value="";
+  refreshCurrent();
+  $("new-product").focus();
+});
+$("new-product").addEventListener("keydown",e=>{
+  if(e.key==="Enter"){e.preventDefault();$("add-product").click();}
+});
 
 function selectProduct(id){
  current.selectedId=id;
@@ -1855,7 +1921,9 @@ function renderSavedBills(){
 }
 $("bill-search").addEventListener("input",renderSavedBills);
 
-let itemsExpanded=true;
+let itemsExpanded=false;
+$("item-list-content").style.display="none";
+$("toggle-items").textContent="Show Items ▼";
 $("toggle-items").addEventListener("click",()=>{
  itemsExpanded=!itemsExpanded;
  $("item-list-content").style.display=itemsExpanded?"block":"none";
@@ -1971,7 +2039,7 @@ function loadTestData(){
  saveStorage();renderSavedBills();loadBill(bill1);
  alert("Test data loaded. A 3-product bill is open. You can edit, save, WhatsApp and delete the TEST bills.");
 }
-$("test-data").addEventListener("click",loadTestData);
+$("test-data").addEventListener("click",e=>{e.preventDefault();loadTestData();});
 
 /* =========================
    PANEL COLLAPSE + BACKUP
