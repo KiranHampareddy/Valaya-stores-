@@ -1,13 +1,14 @@
 
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Valaya Store - Billing</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="preconnect" href="[https://fonts.googleapis.com](https://fonts.googleapis.com/)">
+<link rel="preconnect" href="[https://fonts.gstatic.com](https://fonts.gstatic.com/)" crossorigin>
+<link href="[https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap](https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700\&display=swap)" rel="stylesheet">
 <style>
 *{box-sizing:border-box}
 body{margin:0;font-family:Arial,sans-serif;background:#f5f7fa;color:#222}
@@ -878,7 +879,7 @@ body{
   background:rgba(255,255,255,.96)!important;
 }
 .panel{padding:16px!important}
-.billing-panel{overflow:hidden}
+.billing-panel{overflow:visible!important}
 
 h2,h3{color:var(--v-ink)!important}
 h2{border-bottom-color:var(--v-line)!important}
@@ -970,7 +971,7 @@ button{
   border-radius:12px!important;
 }
 .add-cost-box{
-  overflow:hidden;
+  overflow:visible!important;
 }
 .add-cost-box select,
 .add-cost-box input,
@@ -1162,7 +1163,87 @@ button{
 .raw-material-scroll{max-height:210px;overflow-y:auto;overflow-x:hidden;border:1px solid #e5e5e5;border-radius:6px;}
 .raw-material-scroll table{margin-top:0!important;}
 .raw-material-scroll thead th{position:sticky;top:0;z-index:2;}
-</style>
+
+/* ===== PRODUCT LIST INTERNAL SCROLL - FUNCTIONAL FIX ONLY ===== */
+.product-list{
+  overflow-y:auto!important;
+  overflow-x:hidden!important;
+}
+
+
+/* ===== COMPACT DELETE / ACTION BUTTONS ===== */
+button.red.small{
+  width:32px!important;
+  min-width:32px!important;
+  height:32px!important;
+  min-height:32px!important;
+  padding:0!important;
+  font-size:14px!important;
+  line-height:32px!important;
+  border-radius:8px!important;
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+}
+.raw-material-scroll table{font-size:13px!important;}
+.raw-material-scroll th,.raw-material-scroll td{font-size:13px!important;}
+
+/* ===== RAW MATERIAL PURCHASE DETAILS ===== */
+.raw-material-scroll th,.raw-material-scroll td{font-size:12px;padding:7px 6px;}
+.raw-material-scroll th:nth-child(2),.raw-material-scroll td:nth-child(2),
+.raw-material-scroll th:nth-child(3),.raw-material-scroll td:nth-child(3),
+.raw-material-scroll th:nth-child(4),.raw-material-scroll td:nth-child(4){white-space:nowrap;}
+
+/* ===== DRAGGABLE CONTROL PANEL WIDTH ===== */
+@media(min-width:901px){
+  .container{
+    --inventory-width:330px;
+    grid-template-columns:minmax(250px,var(--inventory-width)) minmax(0,1fr)!important;
+    position:relative;
+  }
+  .container.inventory-resizing{
+    cursor:col-resize;
+    user-select:none;
+  }
+  .inventory-resize-handle{
+    position:absolute;
+    top:18px;
+    bottom:18px;
+    width:10px;
+    margin-left:-5px;
+    cursor:col-resize;
+    z-index:1500;
+    border-radius:8px;
+  }
+  .inventory-resize-handle:after{
+    content:"";
+    position:absolute;
+    top:45%;
+    left:3px;
+    width:4px;
+    height:52px;
+    border-radius:4px;
+    background:var(--v-gold);
+    opacity:.55;
+  }
+  .inventory-resize-handle:hover:after{
+    opacity:1;
+  }
+  .container.inventory-collapsed .inventory-resize-handle{
+    display:none!important;
+  }
+}
+
+/* ===== RAW MATERIAL SEARCHABLE DROPDOWN ===== */
+#item-select.raw-material-hidden{display:none!important;}
+.raw-material-picker{position:relative;min-width:0;}
+.raw-material-picker-button{width:100%;display:flex;justify-content:space-between;align-items:center;text-align:left;background:#fff!important;color:var(--v-ink)!important;border:1px solid #D4DED9!important;box-shadow:none!important;}
+.raw-material-picker-menu{position:absolute;left:0;right:0;top:calc(100% + 4px);z-index:2000;background:#fff;border:1px solid #D4DED9;border-radius:10px;box-shadow:0 10px 24px rgba(20,52,43,.14);overflow:hidden;}
+.raw-material-picker-search{padding:8px;border-bottom:1px solid var(--v-line);background:#fff;}
+.raw-material-picker-search input{width:100%;min-height:38px!important;}
+.raw-material-picker-list{max-height:240px;overflow-y:auto;overflow-x:hidden;padding:4px;}
+.raw-material-picker-option{display:block;width:100%;padding:9px 10px;border:0;border-radius:7px;background:#fff;text-align:left;color:var(--v-ink);font:inherit;font-size:13px;cursor:pointer;min-height:38px;}
+.raw-material-picker-option:hover,.raw-material-picker-option.active{background:var(--v-sage-2);color:var(--v-green);}</style>
 </head>
 <body>
 <header class="valaya-header">
@@ -1195,11 +1276,12 @@ button{
 <option value="" disabled selected>Select Unit</option>
 <option>Pcs</option><option>Grm</option><option>Mtr</option><option>Reel</option>
 </select>
-<input id="rm-qty" type="number" min="0.01" step="0.01" placeholder="Total Qty in Pack" required>
-<input id="rm-cost" type="number" min="0" step="0.01" placeholder="Total Cost for Pack" required>
+<input id="rm-qty" type="number" min="0.01" step="0.01" placeholder="How many in the pack?" required>
+<input id="rm-cost" type="number" min="0" step="0.01" placeholder="What did you pay for the pack?" required>
 <button class="primary">Add New Material</button>
 </form>
-<div class="raw-material-scroll"><table><thead><tr><th>Name</th><th>Unit</th><th>₹/Unit</th><th></th></tr></thead><tbody id="raw-table"></tbody></table></div>
+<div class="help" style="margin-top:6px">Enter what you paid for the pack and how much was in it. The app calculates the cost per Pcs / Grm / Mtr / Reel automatically.</div>
+<div class="raw-material-scroll"><table><thead><tr><th>Material</th><th>Bought For</th><th>Pack Qty</th><th>Cost / Unit</th><th></th></tr></thead><tbody id="raw-table"></tbody></table></div>
 </div>
 
 <div class="inventory-section">
@@ -1316,8 +1398,8 @@ button{
       <span>Discount <small>(products only)</small></span>
       <div class="discount-input-wrap">
         <select id="discount-type" title="Discount type">
-          <option value="percent">%</option>
           <option value="amount">₹</option>
+          <option value="percent">%</option>
         </select>
         <input id="discount" type="number" min="0" step="0.01" placeholder="e.g. 10">
       </div>
@@ -1348,70 +1430,70 @@ document.addEventListener("DOMContentLoaded", function(){
 ========================= */
 const DEFAULT_INVENTORY={
  rawMaterials:[
-
-  {name:"1A - Bangles, normal box, round, 1 cut",unit:"Pcs",price:10.00},
-  {name:"1B - Bangles, normal box, round, 2 cut",unit:"Pcs",price:5.00},
-  {name:"1C - Bangles, normal box, round, 4 cut",unit:"Pcs",price:3.33},
-  {name:"1D - Bangles, normal box, round, 6 cut",unit:"Pcs",price:2.50},
-  {name:"2A - Bangles, flat box, 1 cut",unit:"Pcs",price:10.83},
-  {name:"2B - Bangles, flat box, 2 cut",unit:"Pcs",price:5.42},
-  {name:"2C - Bangles, flat box, 4 cut",unit:"Pcs",price:3.61},
-  {name:"2D - Bangles, flat box, 6 cut",unit:"Pcs",price:2.71},
-  {name:"3 - Thread",unit:"Pcs",price:20.00},
-  {name:"4 - Fevikwik glue, 30 g",unit:"Pcs",price:30.00},
-  {name:"5 - Stone chain",unit:"Mtr",price:30.00},
-  {name:"6 - Ball chain",unit:"Mtr",price:10.00},
-  {name:"7 - Coin",unit:"Grm",price:2.50},
-  {name:"8 - Zardosi",unit:"Grm",price:3.00},
-  {name:"9 - Dragon stones",unit:"Grm",price:3.50},
-  {name:"10 - Center clips, small",unit:"Pcs",price:0.00},
-  {name:"11 - Center clips, medium",unit:"Pcs",price:10.00},
-  {name:"12 - Center clips, big",unit:"Pcs",price:12.00},
-  {name:"13 - Tic-tac clips",unit:"Pcs",price:0.00},
-  {name:"14 - Tic-tac clips, golden",unit:"Pcs",price:10.00},
-  {name:"15 - Saree pin",unit:"Pcs",price:6.67},
-  {name:"16 - Saree pin, metal",unit:"Pcs",price:4.00},
-  {name:"17 - MDF, small round",unit:"Pcs",price:0.00},
-  {name:"18 - Black rubber band",unit:"Pcs",price:5.00},
-  {name:"19 - Band attacher",unit:"Pcs",price:5.00},
-  {name:"20 - Alligator clip, small",unit:"Pcs",price:3.00},
-  {name:"21 - Alligator clip, medium",unit:"Pcs",price:5.00},
-  {name:"22 - GI wire",unit:"Reel",price:50.00},
-  {name:"23 - Neck-piece dori",unit:"Pcs",price:15.00},
-  {name:"24 - Glass lock beads",unit:"Grm",price:10.00},
-  {name:"25 - Eye pin",unit:"Grm",price:2.50},
-  {name:"26 - Jump ring",unit:"Grm",price:2.50},
-  {name:"27 - S-hook",unit:"Grm",price:2.50},
-  {name:"28 - Wax brown sheet",unit:"Pcs",price:1.67},
-  {name:"29 - OHP sheet",unit:"Pcs",price:10.00},
-  {name:"30 - Loreals / Loreals item, unclear",unit:"Grm",price:4.00},
-  {name:"31 - Pearl chain",unit:"Mtr",price:70.00},
-  {name:"32 - U-pin",unit:"Pcs",price:2.00},
-  {name:"33 - Bracelet",unit:"Pcs",price:20.00},
-  {name:"34 - Crimp wire",unit:"Grm",price:3.00},
-  {name:"35 - Felt sheet, 1/4 size",unit:"Pcs",price:35.00},
-  {name:"36A - Sugar beads, matte",unit:"Grm",price:2.50},
-  {name:"36B - Side-hole sequins",unit:"Grm",price:2.00},
-  {name:"37A - Sugar beads, gloss",unit:"Grm",price:2.50},
-  {name:"37B - Sequins",unit:"Grm",price:2.50},
-  {name:"38A - Kundhan beads",unit:"Grm",price:2.00},
-  {name:"38B - Sequins, double shade",unit:"Grm",price:3.00},
-  {name:"39A - Salhi/Salli tube, small, unclear",unit:"Grm",price:2.00},
-  {name:"39B - Plastic round beads",unit:"Grm",price:2.50},
-  {name:"40A - Salhi/Salli tube, long, unclear",unit:"Grm",price:2.00},
-  {name:"40B - White and gold petal, round small",unit:"Grm",price:2.30},
-  {name:"41 - White and gold, round big",unit:"Grm",price:2.30},
-  {name:"42 - White and gold, square",unit:"Grm",price:3.00},
-  {name:"43 - White and gold, other shape",unit:"Grm",price:2.50},
-  {name:"44A - Matte finishing, all",unit:"Grm",price:2.00},
-  {name:"44B - Glossy, all",unit:"Grm",price:3.00},
-  {name:"45 - Item/code 136",unit:"Grm",price:9.00},
-  {name:"46 - Item/code 137",unit:"Pcs",price:25.00},
-  {name:"47 - Item/code 138",unit:"Pcs",price:10.00},
-  {name:"48 - Item/code 139",unit:"Pcs",price:10.00},
-  {name:"49 - Item/code 140",unit:"Pcs",price:10.00},
-  {name:"50 - Item/code 141",unit:"Pcs",price:10.00}
- ],
+  {name:"1A - Bangles, normal box, round, 1 cut",unit:"Pcs",price:10.0000000000,purchaseCost:120.00,packQty:12},
+  {name:"1B - Bangles, normal box, round, 2 cut",unit:"Pcs",price:5.0000000000,purchaseCost:120.00,packQty:24},
+  {name:"1C - Bangles, normal box, round, 4 cut",unit:"Pcs",price:3.3333333333,purchaseCost:120.00,packQty:36},
+  {name:"1D - Bangles, normal box, round, 6 cut",unit:"Pcs",price:2.5000000000,purchaseCost:120.00,packQty:48},
+  {name:"2A - Bangles, flat box, 1 cut",unit:"Pcs",price:10.8333333333,purchaseCost:130.00,packQty:12},
+  {name:"2B - Bangles, flat box, 2 cut",unit:"Pcs",price:5.4166666667,purchaseCost:130.00,packQty:24},
+  {name:"2C - Bangles, flat box, 4 cut",unit:"Pcs",price:3.6111111111,purchaseCost:130.00,packQty:36},
+  {name:"2D - Bangles, flat box, 6 cut",unit:"Pcs",price:2.7083333333,purchaseCost:130.00,packQty:48},
+  {name:"3 - Thread",unit:"Pcs",price:20.0000000000,purchaseCost:20.00,packQty:1},
+  {name:"4 - Fevikwik glue, 30 g",unit:"Pcs",price:30.0000000000,purchaseCost:30.00,packQty:1},
+  {name:"5 - Stone chain",unit:"Mtr",price:30.0000000000,purchaseCost:30.00,packQty:1},
+  {name:"6 - Ball chain",unit:"Mtr",price:10.0000000000,purchaseCost:10.00,packQty:1},
+  {name:"7 - Coin",unit:"Grm",price:2.5000000000,purchaseCost:25.00,packQty:10},
+  {name:"8 - Zardosi",unit:"Grm",price:3.0000000000,purchaseCost:30.00,packQty:10},
+  {name:"9 - Jargon stone",unit:"Grm",price:3.5000000000,purchaseCost:35.00,packQty:10},
+  {name:"10 - Center clips, small",unit:"Pcs",price:10.0000000000,purchaseCost:10.00,packQty:1},
+  {name:"11 - Center clips, medium",unit:"Pcs",price:10.0000000000,purchaseCost:10.00,packQty:1},
+  {name:"12 - Center clips, big",unit:"Pcs",price:12.0000000000,purchaseCost:12.00,packQty:1},
+  {name:"13 - Tic-tac clips",unit:"Pairs",price:0.0000000000,purchaseCost:0.00,packQty:6},
+  {name:"14 - Tic-tac clips, golden",unit:"Pairs",price:10.0000000000,purchaseCost:60.00,packQty:6},
+  {name:"15 - Saree pin",unit:"Pcs",price:6.6666666667,purchaseCost:80.00,packQty:12},
+  {name:"16 - Saree pin, metal",unit:"Pcs",price:4.0000000000,purchaseCost:40.00,packQty:10},
+  {name:"17 - MDF, small round",unit:"Pcs",price:0.0000000000,purchaseCost:0.00,packQty:100},
+  {name:"18 - Black rubber band",unit:"Pcs",price:5.0000000000,purchaseCost:5.00,packQty:1},
+  {name:"19 - Band attacher",unit:"Pcs",price:5.0000000000,purchaseCost:5.00,packQty:1},
+  {name:"20 - Alligator clip, small",unit:"Pcs",price:3.0000000000,purchaseCost:3.00,packQty:1},
+  {name:"21 - Alligator clip, medium",unit:"Pcs",price:5.0000000000,purchaseCost:5.00,packQty:1},
+  {name:"22 - GI wire",unit:"Reel",price:50.0000000000,purchaseCost:50.00,packQty:1},
+  {name:"23 - Neck-pcs dori",unit:"Pcs",price:15.0000000000,purchaseCost:15.00,packQty:1},
+  {name:"24 - Glass lock beads",unit:"Grm",price:10.0000000000,purchaseCost:50.00,packQty:5},
+  {name:"25 - Eye pin",unit:"Grm",price:2.5000000000,purchaseCost:25.00,packQty:10},
+  {name:"26 - Jump ring",unit:"Grm",price:2.5000000000,purchaseCost:25.00,packQty:10},
+  {name:"27 - S-hook",unit:"Grm",price:2.5000000000,purchaseCost:25.00,packQty:10},
+  {name:"28 - Wax brown sheet",unit:"Pcs",price:1.6666666667,purchaseCost:50.00,packQty:30},
+  {name:"29 - OHP sheet",unit:"Pcs",price:10.0000000000,purchaseCost:10.00,packQty:1},
+  {name:"30 - Loreals",unit:"Grm",price:4.0000000000,purchaseCost:40.00,packQty:10},
+  {name:"31 - Pearl chain",unit:"Mtr",price:70.0000000000,purchaseCost:70.00,packQty:1},
+  {name:"32 - U-pin",unit:"Pcs",price:2.0000000000,purchaseCost:10.00,packQty:5},
+  {name:"33 - Bracelet",unit:"Pcs",price:20.0000000000,purchaseCost:20.00,packQty:1},
+  {name:"34 - Gimp wire",unit:"Grm",price:3.0000000000,purchaseCost:30.00,packQty:10},
+  {name:"35 - Felt sheet, A4 size",unit:"Pcs",price:35.0000000000,purchaseCost:35.00,packQty:1},
+  {name:"36A - Sugar beads, matte",unit:"Grm",price:2.5000000000,purchaseCost:25.00,packQty:10},
+  {name:"36B - Sugar beads, gloss",unit:"Grm",price:2.5000000000,purchaseCost:25.00,packQty:10},
+  {name:"37A - Curdhand Beads",unit:"Grm",price:2.0000000000,purchaseCost:20.00,packQty:10},
+  {name:"37B - Salki tube, small",unit:"Grm",price:2.0000000000,purchaseCost:20.00,packQty:10},
+  {name:"38A - Salki tube, Long",unit:"Grm",price:2.0000000000,purchaseCost:20.00,packQty:10},
+  {name:"38B - Side hole Sequence",unit:"Grm",price:2.0000000000,purchaseCost:20.00,packQty:10},
+  {name:"39A - Sequence",unit:"Grm",price:2.5000000000,purchaseCost:25.00,packQty:10},
+  {name:"39B - Sequence Double shade",unit:"Grm",price:3.0000000000,purchaseCost:30.00,packQty:10},
+  {name:"40A - Plastic round beads",unit:"Grm",price:2.5000000000,purchaseCost:25.00,packQty:10},
+  {name:"40B - White and gold petal, round small",unit:"Grm",price:2.3000000000,purchaseCost:23.00,packQty:10},
+  {name:"41 - White and gold, round big",unit:"Grm",price:2.3000000000,purchaseCost:23.00,packQty:10},
+  {name:"42 - White and gold, square",unit:"Grm",price:3.0000000000,purchaseCost:30.00,packQty:10},
+  {name:"43 - White and gold, other shape",unit:"Grm",price:2.5000000000,purchaseCost:25.00,packQty:10},
+  {name:"44A - Matte finishing, other shape",unit:"Grm",price:2.5000000000,purchaseCost:25.00,packQty:10},
+  {name:"44B - Matte finishing other shape",unit:"Grm",price:3.0000000000,purchaseCost:30.00,packQty:10},
+  {name:"45 - Glossy finishing other shape",unit:"Grm",price:3.0000000000,purchaseCost:30.00,packQty:10},
+  {name:"46 - Item/code 136",unit:"Grm",price:9.0000000000,purchaseCost:45.00,packQty:5},
+  {name:"47 - Item/code 137",unit:"Pcs",price:25.0000000000,purchaseCost:25.00,packQty:1},
+  {name:"48 - Item/code 138",unit:"Pcs",price:10.0000000000,purchaseCost:10.00,packQty:1},
+  {name:"49 - Item/code 139",unit:"Pcs",price:10.0000000000,purchaseCost:10.00,packQty:1},
+  {name:"50 - Item/code 140",unit:"Pcs",price:10.0000000000,purchaseCost:10.00,packQty:1},
+  {name:"51 - Item/code 141",unit:"Pcs",price:10.0000000000,purchaseCost:10.00,packQty:1}
+],
  labor:[
   {name:"Tanuja",rate:50},
   {name:"Kris",rate:200},
@@ -1454,28 +1536,88 @@ function loadStorage(){
   inventory.labor=Array.isArray(inventory.labor)?inventory.labor:clone(DEFAULT_INVENTORY.labor);
   inventory.packing=Array.isArray(inventory.packing)?inventory.packing:clone(DEFAULT_INVENTORY.packing);
   inventory.savedBills=Array.isArray(inventory.savedBills)?inventory.savedBills:[];
+  inventory.rawMaterials.forEach(x=>{
+   if(x.purchaseCost===undefined)x.purchaseCost=Number(x.price)||0;
+   if(x.packQty===undefined)x.packQty=1;
+  });
   billCounter=counter?parseInt(counter,10)||0:0;
  }catch(e){
   inventory=clone(DEFAULT_INVENTORY);
   billCounter=0;
  }
 }
+function setupInventoryResize(){
+ const container=document.querySelector(".container");
+ const inventoryPanel=document.querySelector(".inventory-panel");
+ if(!container||!inventoryPanel)return;
+ if(document.querySelector(".inventory-resize-handle"))return;
+
+ const handle=document.createElement("div");
+ handle.className="inventory-resize-handle";
+ container.appendChild(handle);
+
+ const getCurrentWidth=()=>{
+  const value=parseFloat(getComputedStyle(container).getPropertyValue("--inventory-width"));
+  return Number.isFinite(value)?value:330;
+ };
+
+ const placeHandle=()=>{
+  if(window.innerWidth<901)return;
+  if(container.classList.contains("inventory-collapsed")){
+   handle.style.display="none";
+   return;
+  }
+  handle.style.display="block";
+  const rect=inventoryPanel.getBoundingClientRect();
+  const containerRect=container.getBoundingClientRect();
+  handle.style.left=(rect.right-containerRect.left)+"px";
+ };
+
+ let dragging=false;
+
+ handle.addEventListener("pointerdown",e=>{
+  if(window.innerWidth<901||container.classList.contains("inventory-collapsed"))return;
+  dragging=true;
+  handle.setPointerCapture(e.pointerId);
+  container.classList.add("inventory-resizing");
+  e.preventDefault();
+ });
+
+ handle.addEventListener("pointermove",e=>{
+  if(!dragging)return;
+  const rect=container.getBoundingClientRect();
+  const width=Math.max(250,Math.min(520,e.clientX-rect.left));
+  container.style.setProperty("--inventory-width",width+"px");
+  placeHandle();
+ });
+
+ const stopDrag=()=>{
+  if(!dragging)return;
+  dragging=false;
+  container.classList.remove("inventory-resizing");
+  placeHandle();
+ };
+ handle.addEventListener("pointerup",stopDrag);
+ handle.addEventListener("pointercancel",stopDrag);
+ window.addEventListener("resize",placeHandle);
+
+ placeHandle();
+}
+
 function saveStorage(){
  localStorage.setItem("valayaStoreBilling_v1",JSON.stringify(inventory));
  localStorage.setItem("valayaStoreBillCounter_v1",String(billCounter));
 }
 
-const MATERIAL_SEED_VERSION="2026-09-11-02";
+const MATERIAL_SEED_VERSION="2026-09-11-03";
 function mergeRestoredMaterials(){
  const seeded=localStorage.getItem("valayaStoreBilling_materialSeedVersion");
- if(seeded===MATERIAL_SEED_VERSION)return;
- const existing=new Set((inventory.rawMaterials||[]).map(x=>String(x.name).trim().toLowerCase()));
- DEFAULT_INVENTORY.rawMaterials.forEach(item=>{
-  const key=String(item.name).trim().toLowerCase();
-  if(!existing.has(key))inventory.rawMaterials.push(clone(item));
- });
+ if(seeded==="2026-09-11-03")return;
+ const oldSeedNames=new Set(["1A - Bangles, normal box, round, 1 cut","1B - Bangles, normal box, round, 2 cut","1C - Bangles, normal box, round, 4 cut","1D - Bangles, normal box, round, 6 cut","2A - Bangles, flat box, 1 cut","2B - Bangles, flat box, 2 cut","2C - Bangles, flat box, 4 cut","2D - Bangles, flat box, 6 cut","3 - Thread","4 - Fevikwik glue, 30 g","5 - Stone chain","6 - Ball chain","7 - Coin","8 - Zardosi","9 - Dragon stones","10 - Center clips, small","11 - Center clips, medium","12 - Center clips, big","13 - Tic-tac clips","14 - Tic-tac clips, golden","15 - Saree pin","16 - Saree pin, metal","17 - MDF, small round","18 - Black rubber band","19 - Band attacher","20 - Alligator clip, small","21 - Alligator clip, medium","22 - GI wire","23 - Neck-pcs dori","24 - Glass lock beads","25 - Eye pin","26 - Jump ring","27 - S-hook","28 - Wax brown sheet","29 - OHP sheet","30 - Loreals / Loreals item, unclear","31 - Pearl chain","32 - U-pin","33 - Bracelet","34 - Crimp wire","35 - Felt sheet, 1/4 size","36A - Sugar beads, matte","36B - Side-hole sequins","37A - Sugar beads, gloss","37B - Sequins","38A - Kundhan beads","38B - Sequins, double shade","39A - Salhi/Salli tube, small, unclear","39B - Plastic round beads","40A - Salhi/Salli tube, long, unclear","40B - White and gold petal, round small","41 - White and gold, round big","42 - White and gold, square","43 - White and gold, other shape","44A - Matte finishing, all","44B - Glossy, all","45 - Item/code 136","46 - Item/code 137","47 - Item/code 138","48 - Item/code 139","49 - Item/code 140","50 - Item/code 141"].map(x=>x.toLowerCase()));
+ const custom=(inventory.rawMaterials||[]).filter(x=>!oldSeedNames.has(String(x.name).trim().toLowerCase()));
+ inventory.rawMaterials=DEFAULT_INVENTORY.rawMaterials.map(clone).concat(custom);
  inventory.savedBills=(inventory.savedBills||[]).filter(b=>!(b.details?.invoice||"").startsWith("VAL-TEST-"));
- localStorage.setItem("valayaStoreBilling_materialSeedVersion",MATERIAL_SEED_VERSION);
+ localStorage.setItem("valayaStoreBilling_materialSeedVersion","2026-09-11-03");
  saveStorage();
 }
 
@@ -1494,7 +1636,10 @@ function renderInventory(){
  raw.innerHTML="";
  inventory.rawMaterials.forEach((x,i)=>{
   const r=raw.insertRow();
-  r.innerHTML=`<td>${escape(x.name)}</td><td>${escape(x.unit)}</td><td>${money(x.price)}</td><td><button class="red small" onclick="deleteInventoryItem('rawMaterials',${i})">×</button></td>`;
+  const purchaseCost=Number(x.purchaseCost ?? x.price)||0;
+  const packQty=Number(x.packQty ?? 1)||1;
+  const unitLabel=escape(x.unit||"");
+  r.innerHTML=`<td>${escape(x.name)}</td><td>${money(purchaseCost)}</td><td>${packQty} ${unitLabel}</td><td>${money(x.price)} / ${unitLabel}</td><td><button class="red small" onclick="deleteInventoryItem('rawMaterials',${i})">×</button></td>`;
  });
  labor.innerHTML="";
  inventory.labor.forEach((x,i)=>{
@@ -1513,7 +1658,13 @@ $("raw-form").addEventListener("submit",e=>{
  e.preventDefault();
  const qty=parseFloat($("rm-qty").value), cost=parseFloat($("rm-cost").value);
  if(qty<=0){alert("Quantity must be greater than 0.");return;}
- inventory.rawMaterials.push({name:$("rm-name").value.trim(),unit:$("rm-unit").value,price:cost/qty});
+ inventory.rawMaterials.push({
+  name:$("rm-name").value.trim(),
+  unit:$("rm-unit").value,
+  price:cost/qty,
+  purchaseCost:cost,
+  packQty:qty
+ });
  saveStorage();renderInventory();updateItemSelect();e.target.reset();
 });
 $("labor-form").addEventListener("submit",e=>{
@@ -1662,6 +1813,13 @@ function renderSelectedProduct(){
     <option value="packing">Packing</option>
    </select>
    <select id="item-select"></select>
+   <div id="raw-material-picker" class="raw-material-picker" style="display:none">
+    <button id="raw-material-picker-button" class="raw-material-picker-button" type="button">Select a raw material <span>⌄</span></button>
+    <div id="raw-material-picker-menu" class="raw-material-picker-menu" style="display:none">
+     <div class="raw-material-picker-search"><input id="raw-material-picker-search" type="text" placeholder="Type to find a material..."></div>
+     <div id="raw-material-picker-list" class="raw-material-picker-list"></div>
+    </div>
+   </div>
    <input id="item-quantity" type="number" min="0.01" step="0.01" placeholder="Quantity / Hours">
    <button id="add-item" class="green" type="button">+ Add Cost</button>
   </div>`;
@@ -1723,6 +1881,7 @@ function renderSelectedProduct(){
  box.appendChild(calculation);
  updateItemSelect();
  bindCostControls();
+ bindRawMaterialPicker();
 }
 
 function refreshCurrent(renderAll=true){
@@ -1737,13 +1896,77 @@ function refreshCurrent(renderAll=true){
 function updateItemSelect(){
  const type=$("item-type").value;
  let data=type==="raw"?inventory.rawMaterials:type==="labor"?inventory.labor:inventory.packing;
- $("item-select").innerHTML="";
+ const select=$("item-select");
+ select.innerHTML="";
  data.forEach((x,i)=>{
   const o=document.createElement("option");
   o.value=i;
   o.textContent=x.name+(type==="labor"?" (Hours)":" ("+x.unit+")");
-  $("item-select").appendChild(o);
+  select.appendChild(o);
  });
+ const picker=$("raw-material-picker");
+ const pickerButton=$("raw-material-picker-button");
+ const pickerMenu=$("raw-material-picker-menu");
+ if(type!=="raw" || !picker || !pickerButton || !pickerMenu){
+  if(picker)picker.style.display="none";
+  select.classList.remove("raw-material-hidden");
+  return;
+ }
+ select.classList.add("raw-material-hidden");
+ picker.style.display="block";
+ pickerMenu.style.display="none";
+ pickerButton.innerHTML="Select a raw material <span>⌄</span>";
+ const list=$("raw-material-picker-list");
+ list.innerHTML="";
+ data.forEach((x,i)=>{
+  const b=document.createElement("button");
+  b.type="button";
+  b.className="raw-material-picker-option";
+  b.dataset.index=i;
+  b.textContent=x.name+" ("+x.unit+")";
+  b.addEventListener("click",()=>{
+   select.value=String(i);
+   pickerButton.innerHTML=escape(x.name+" ("+x.unit+")")+" <span>⌄</span>";
+   pickerMenu.style.display="none";
+   const search=$("raw-material-picker-search");
+   if(search)search.value="";
+  });
+  list.appendChild(b);
+ });
+ const search=$("raw-material-picker-search");
+ if(search)search.value="";
+}
+
+function bindRawMaterialPicker(){
+ const picker=$("raw-material-picker");
+ const button=$("raw-material-picker-button");
+ const menu=$("raw-material-picker-menu");
+ const search=$("raw-material-picker-search");
+ const list=$("raw-material-picker-list");
+ if(!picker||!button||!menu||!search||!list)return;
+ button.addEventListener("click",()=>{
+  const open=menu.style.display!=="none";
+  menu.style.display=open?"none":"block";
+  if(!open){search.focus();filterRawMaterialPicker();}
+ });
+ search.addEventListener("input",filterRawMaterialPicker);
+ search.addEventListener("keydown",e=>{
+  if(e.key==="Escape"){menu.style.display="none";button.focus();}
+ });
+ document.addEventListener("click",e=>{
+  if(!picker.contains(e.target))menu.style.display="none";
+ });
+ function filterRawMaterialPicker(){
+  const q=search.value.trim().toLowerCase();
+  const options=Array.from(list.querySelectorAll(".raw-material-picker-option"));
+  options.forEach(o=>{
+   const text=o.textContent.toLowerCase();
+   o.style.display=(!q||text.includes(q))?"block":"none";
+  });
+  const best=options.find(o=>o.style.display!=="none" && o.textContent.toLowerCase().startsWith(q));
+  options.forEach(o=>o.classList.remove("active"));
+  if(best)best.classList.add("active");
+ }
 }
 function bindCostControls(){
  const itemType=$("item-type");
@@ -1907,10 +2130,10 @@ function setupNewBill(increment=true){
   invoice:"VAL-"+String(billCounter).padStart(6,"0"),
   courier:0,
   discount:0,
-  discountType:"percent"
+  discountType:"amount"
  };
  $("customer").value="";$("phone").value="";$("address").value="";$("notes").value="";
- $("courier").value="";$("discount").value="";$("discount-type").value="percent";
+ $("courier").value="";$("discount").value="";$("discount-type").value="amount";
  $("date").textContent=current.date;$("invoice").textContent=current.invoice;
  renderProducts();renderSelectedProduct();renderBillItems();calculateOrder();
 }
@@ -2061,6 +2284,7 @@ $("toggle-inventory").addEventListener("click",()=>{
  $("inventory-panel").classList.toggle("collapsed",!inventoryExpanded);
  document.querySelector(".container").classList.toggle("inventory-collapsed",!inventoryExpanded);
  $("toggle-inventory").textContent=inventoryExpanded?"Collapse ◀":"Open ▶";
+ setupInventoryResize();
 });
 
 $("export-backup").addEventListener("click",()=>{
@@ -2151,6 +2375,7 @@ mergeRestoredMaterials();
 renderInventory();
 renderSavedBills();
 setupNewBill(true);
+setupInventoryResize();
 });
 </script>
 </body>
