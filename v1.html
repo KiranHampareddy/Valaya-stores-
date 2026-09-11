@@ -1158,6 +1158,10 @@ button{
   .order-total{box-shadow:none!important;}
 }
 
+
+.raw-material-scroll{max-height:210px;overflow-y:auto;overflow-x:hidden;border:1px solid #e5e5e5;border-radius:6px;}
+.raw-material-scroll table{margin-top:0!important;}
+.raw-material-scroll thead th{position:sticky;top:0;z-index:2;}
 </style>
 </head>
 <body>
@@ -1195,7 +1199,7 @@ button{
 <input id="rm-cost" type="number" min="0" step="0.01" placeholder="Total Cost for Pack" required>
 <button class="primary">Add New Material</button>
 </form>
-<table><thead><tr><th>Name</th><th>Unit</th><th>₹/Unit</th><th></th></tr></thead><tbody id="raw-table"></tbody></table>
+<div class="raw-material-scroll"><table><thead><tr><th>Name</th><th>Unit</th><th>₹/Unit</th><th></th></tr></thead><tbody id="raw-table"></tbody></table></div>
 </div>
 
 <div class="inventory-section">
@@ -1226,7 +1230,6 @@ button{
   <button id="import-backup" class="gray small" type="button">📥 Import Backup</button>
   <input id="backup-file" type="file" accept=".json,application/json" style="display:none">
 </div>
-<button id="test-data" type="button" class="test-btn">Load Test Data</button>
 <input id="bill-search" placeholder="Search customer or invoice number...">
 <table>
 <thead><tr><th>Invoice</th><th>Customer</th><th>Total</th><th>Action</th></tr></thead>
@@ -1274,23 +1277,6 @@ button{
 
   <div class="products-box costing-workspace">
     <div id="selected-product" class="selected-product"></div>
-
-    <div class="add-cost-box">
-      <div class="add-cost-title">
-        <strong>Add Cost to This Product</strong>
-        <span class="help">Choose material/labor/packing → quantity → Add</span>
-      </div>
-      <div class="costing-controls">
-        <select id="item-type">
-          <option value="raw">Raw Material</option>
-          <option value="labor">Labor</option>
-          <option value="packing">Packing</option>
-        </select>
-        <select id="item-select"></select>
-        <input id="item-quantity" type="number" min="0.01" step="0.01" placeholder="Quantity / Hours">
-        <button id="add-item" class="green">+ Add Cost</button>
-      </div>
-    </div>
   </div>
 </div>
 
@@ -1351,7 +1337,7 @@ button{
 </div>
 </section>
 </main>
-<div class="app-version">Valaya Billing v1.4</div>
+<div class="app-version">Valaya Billing v1.4.5</div>
 
 <script>
 document.addEventListener("DOMContentLoaded", function(){
@@ -1362,15 +1348,69 @@ document.addEventListener("DOMContentLoaded", function(){
 ========================= */
 const DEFAULT_INVENTORY={
  rawMaterials:[
-  {name:"Bangles 8-cut",unit:"Pcs",price:1.67},
-  {name:"Bangles 4-cut",unit:"Pcs",price:2.50},
-  {name:"Threads",unit:"Reel",price:22},
-  {name:"Kundan (Eye shape)",unit:"Grm",price:3},
-  {name:"Kundan (Square shape)",unit:"Grm",price:2.70},
-  {name:"White stones",unit:"Grm",price:3},
-  {name:"Kundan (Drop shape)",unit:"Grm",price:1.25},
-  {name:"Square stones",unit:"Grm",price:2},
-  {name:"Glass bangles",unit:"Pcs",price:10}
+
+  {name:"1A - Bangles, normal box, round, 1 cut",unit:"Pcs",price:10.00},
+  {name:"1B - Bangles, normal box, round, 2 cut",unit:"Pcs",price:5.00},
+  {name:"1C - Bangles, normal box, round, 4 cut",unit:"Pcs",price:3.33},
+  {name:"1D - Bangles, normal box, round, 6 cut",unit:"Pcs",price:2.50},
+  {name:"2A - Bangles, flat box, 1 cut",unit:"Pcs",price:10.83},
+  {name:"2B - Bangles, flat box, 2 cut",unit:"Pcs",price:5.42},
+  {name:"2C - Bangles, flat box, 4 cut",unit:"Pcs",price:3.61},
+  {name:"2D - Bangles, flat box, 6 cut",unit:"Pcs",price:2.71},
+  {name:"3 - Thread",unit:"Pcs",price:20.00},
+  {name:"4 - Fevikwik glue, 30 g",unit:"Pcs",price:30.00},
+  {name:"5 - Stone chain",unit:"Mtr",price:30.00},
+  {name:"6 - Ball chain",unit:"Mtr",price:10.00},
+  {name:"7 - Coin",unit:"Grm",price:2.50},
+  {name:"8 - Zardosi",unit:"Grm",price:3.00},
+  {name:"9 - Dragon stones",unit:"Grm",price:3.50},
+  {name:"10 - Center clips, small",unit:"Pcs",price:0.00},
+  {name:"11 - Center clips, medium",unit:"Pcs",price:10.00},
+  {name:"12 - Center clips, big",unit:"Pcs",price:12.00},
+  {name:"13 - Tic-tac clips",unit:"Pcs",price:0.00},
+  {name:"14 - Tic-tac clips, golden",unit:"Pcs",price:10.00},
+  {name:"15 - Saree pin",unit:"Pcs",price:6.67},
+  {name:"16 - Saree pin, metal",unit:"Pcs",price:4.00},
+  {name:"17 - MDF, small round",unit:"Pcs",price:0.00},
+  {name:"18 - Black rubber band",unit:"Pcs",price:5.00},
+  {name:"19 - Band attacher",unit:"Pcs",price:5.00},
+  {name:"20 - Alligator clip, small",unit:"Pcs",price:3.00},
+  {name:"21 - Alligator clip, medium",unit:"Pcs",price:5.00},
+  {name:"22 - GI wire",unit:"Reel",price:50.00},
+  {name:"23 - Neck-piece dori",unit:"Pcs",price:15.00},
+  {name:"24 - Glass lock beads",unit:"Grm",price:10.00},
+  {name:"25 - Eye pin",unit:"Grm",price:2.50},
+  {name:"26 - Jump ring",unit:"Grm",price:2.50},
+  {name:"27 - S-hook",unit:"Grm",price:2.50},
+  {name:"28 - Wax brown sheet",unit:"Pcs",price:1.67},
+  {name:"29 - OHP sheet",unit:"Pcs",price:10.00},
+  {name:"30 - Loreals / Loreals item, unclear",unit:"Grm",price:4.00},
+  {name:"31 - Pearl chain",unit:"Mtr",price:70.00},
+  {name:"32 - U-pin",unit:"Pcs",price:2.00},
+  {name:"33 - Bracelet",unit:"Pcs",price:20.00},
+  {name:"34 - Crimp wire",unit:"Grm",price:3.00},
+  {name:"35 - Felt sheet, 1/4 size",unit:"Pcs",price:35.00},
+  {name:"36A - Sugar beads, matte",unit:"Grm",price:2.50},
+  {name:"36B - Side-hole sequins",unit:"Grm",price:2.00},
+  {name:"37A - Sugar beads, gloss",unit:"Grm",price:2.50},
+  {name:"37B - Sequins",unit:"Grm",price:2.50},
+  {name:"38A - Kundhan beads",unit:"Grm",price:2.00},
+  {name:"38B - Sequins, double shade",unit:"Grm",price:3.00},
+  {name:"39A - Salhi/Salli tube, small, unclear",unit:"Grm",price:2.00},
+  {name:"39B - Plastic round beads",unit:"Grm",price:2.50},
+  {name:"40A - Salhi/Salli tube, long, unclear",unit:"Grm",price:2.00},
+  {name:"40B - White and gold petal, round small",unit:"Grm",price:2.30},
+  {name:"41 - White and gold, round big",unit:"Grm",price:2.30},
+  {name:"42 - White and gold, square",unit:"Grm",price:3.00},
+  {name:"43 - White and gold, other shape",unit:"Grm",price:2.50},
+  {name:"44A - Matte finishing, all",unit:"Grm",price:2.00},
+  {name:"44B - Glossy, all",unit:"Grm",price:3.00},
+  {name:"45 - Item/code 136",unit:"Grm",price:9.00},
+  {name:"46 - Item/code 137",unit:"Pcs",price:25.00},
+  {name:"47 - Item/code 138",unit:"Pcs",price:10.00},
+  {name:"48 - Item/code 139",unit:"Pcs",price:10.00},
+  {name:"49 - Item/code 140",unit:"Pcs",price:10.00},
+  {name:"50 - Item/code 141",unit:"Pcs",price:10.00}
  ],
  labor:[
   {name:"Tanuja",rate:50},
@@ -1423,6 +1463,20 @@ function loadStorage(){
 function saveStorage(){
  localStorage.setItem("valayaStoreBilling_v1",JSON.stringify(inventory));
  localStorage.setItem("valayaStoreBillCounter_v1",String(billCounter));
+}
+
+const MATERIAL_SEED_VERSION="2026-09-11-02";
+function mergeRestoredMaterials(){
+ const seeded=localStorage.getItem("valayaStoreBilling_materialSeedVersion");
+ if(seeded===MATERIAL_SEED_VERSION)return;
+ const existing=new Set((inventory.rawMaterials||[]).map(x=>String(x.name).trim().toLowerCase()));
+ DEFAULT_INVENTORY.rawMaterials.forEach(item=>{
+  const key=String(item.name).trim().toLowerCase();
+  if(!existing.has(key))inventory.rawMaterials.push(clone(item));
+ });
+ inventory.savedBills=(inventory.savedBills||[]).filter(b=>!(b.details?.invoice||"").startsWith("VAL-TEST-"));
+ localStorage.setItem("valayaStoreBilling_materialSeedVersion",MATERIAL_SEED_VERSION);
+ saveStorage();
 }
 
 /* =========================
@@ -1594,6 +1648,25 @@ function renderSelectedProduct(){
  title.innerHTML=`<strong>${escape(p.name)}</strong><span class="help" style="margin:0">${p.items.length} cost item${p.items.length===1?"":"s"}</span>`;
  box.appendChild(title);
 
+ const addCostBox=document.createElement("div");
+ addCostBox.className="add-cost-box";
+ addCostBox.innerHTML=`
+  <div class="add-cost-title">
+   <strong>Add Cost to This Product</strong>
+   <span class="help">Choose material/labor/packing → quantity → Add</span>
+  </div>
+  <div class="costing-controls">
+   <select id="item-type">
+    <option value="raw">Raw Material</option>
+    <option value="labor">Labor</option>
+    <option value="packing">Packing</option>
+   </select>
+   <select id="item-select"></select>
+   <input id="item-quantity" type="number" min="0.01" step="0.01" placeholder="Quantity / Hours">
+   <button id="add-item" class="green" type="button">+ Add Cost</button>
+  </div>`;
+ box.appendChild(addCostBox);
+
  const calc=calculateProduct(p);
 
  const calculation=document.createElement("div");
@@ -1648,6 +1721,8 @@ function renderSelectedProduct(){
   <div class="calc-line calc-final"><span>Product Price</span><strong>${money(calc.price)}</strong></div>`;
  calculation.appendChild(calcLines);
  box.appendChild(calculation);
+ updateItemSelect();
+ bindCostControls();
 }
 
 function refreshCurrent(renderAll=true){
@@ -1670,23 +1745,27 @@ function updateItemSelect(){
   $("item-select").appendChild(o);
  });
 }
-$("item-type").addEventListener("change",updateItemSelect);
-
-$("add-item").addEventListener("click",()=>{
- const p=current.products.find(x=>x.id===current.selectedId);
- if(!p){alert("Add and select a product first.");return;}
- const index=$("item-select").value;
- const qty=parseFloat($("item-quantity").value);
- if(index===""||!qty||qty<=0){alert("Select an item and enter a valid quantity.");return;}
- const type=$("item-type").value;
- let source,price,description;
- if(type==="raw"){source=inventory.rawMaterials[index];price=source.price;description=source.name+" ("+source.unit+")";}
- else if(type==="labor"){source=inventory.labor[index];price=source.rate;description=source.name+" (Hours)";}
- else{source=inventory.packing[index];price=source.price;description=source.name+" ("+source.unit+")";}
- p.items.push({type,description,quantity:qty,unitPrice:price,total:qty*price});
- $("item-quantity").value="";
- refreshCurrent();
-});
+function bindCostControls(){
+ const itemType=$("item-type");
+ const addItem=$("add-item");
+ if(!itemType||!addItem)return;
+ itemType.addEventListener("change",updateItemSelect);
+ addItem.addEventListener("click",()=>{
+  const p=current.products.find(x=>x.id===current.selectedId);
+  if(!p){alert("Add and select a product first.");return;}
+  const index=$("item-select").value;
+  const qty=parseFloat($("item-quantity").value);
+  if(index===""||!qty||qty<=0){alert("Select an item and enter a valid quantity.");return;}
+  const type=$("item-type").value;
+  let source,price,description;
+  if(type==="raw"){source=inventory.rawMaterials[index];price=source.price;description=source.name+" ("+source.unit+")";}
+  else if(type==="labor"){source=inventory.labor[index];price=source.rate;description=source.name+" (Hours)";}
+  else{source=inventory.packing[index];price=source.price;description=source.name+" ("+source.unit+")";}
+  p.items.push({type,description,quantity:qty,unitPrice:price,total:qty*price});
+  $("item-quantity").value="";
+  refreshCurrent();
+ });
+}
 
 function renderBillItems(){
  const body=$("bill-items");
@@ -1818,7 +1897,7 @@ $("discount-type").addEventListener("change",()=>{
 function setupNewBill(increment=true){
  if(increment)billCounter++;
  current={
-  products:[newProduct("Product 1")],
+  products:[],
   selectedId:null,
   customer:"",
   phone:"",
@@ -1830,11 +1909,10 @@ function setupNewBill(increment=true){
   discount:0,
   discountType:"percent"
  };
- current.selectedId=current.products[0].id;
  $("customer").value="";$("phone").value="";$("address").value="";$("notes").value="";
  $("courier").value="";$("discount").value="";$("discount-type").value="percent";
  $("date").textContent=current.date;$("invoice").textContent=current.invoice;
- renderProducts();renderSelectedProduct();updateItemSelect();renderBillItems();calculateOrder();
+ renderProducts();renderSelectedProduct();renderBillItems();calculateOrder();
 }
 
 function billObject(){
@@ -1975,73 +2053,6 @@ $("whatsapp").addEventListener("click",()=>{
 });
 
 /* =========================
-   TEST DATA
-========================= */
-function testItem(type,description,qty,unitPrice){
- return {type,description,quantity:qty,unitPrice,total:qty*unitPrice};
-}
-function createTestBill(invoice,customer,products,courier,discount){
- const ps=products.map((p,i)=>{
-  const x=newProduct(p.name);
-  x.id="test_"+invoice+"_"+i;
-  x.items=p.items;
-  x.expense="0.10";x.profit="0.20";
-  return x;
- });
- const productsTotal=ps.reduce((s,p)=>s+calculateProduct(p).price,0);
- return {
-  products:ps,
-  details:{
-   invoice,customer,phone:"9738285473",address:"Test Address, Bengaluru",
-   notes:"TEST DATA - safe to delete",date:new Date().toLocaleDateString("en-GB"),
-   courier,discount,discountType:"amount",discountInput:discount,productsTotal,grand:Math.max(0,productsTotal+courier-discount)
-  }
- };
-}
-function loadTestData(){
- const raw1=inventory.rawMaterials.find(x=>x.name==="Bangles 8-cut")||{name:"Bangles 8-cut",unit:"Pcs",price:1.67};
- const kundan=inventory.rawMaterials.find(x=>x.name==="Kundan (Eye shape)")||{name:"Kundan (Eye shape)",unit:"Grm",price:3};
- const stones=inventory.rawMaterials.find(x=>x.name==="White stones")||{name:"White stones",unit:"Grm",price:3};
- const tanuja=inventory.labor.find(x=>x.name==="Tanuja")||{name:"Tanuja",rate:50};
- const kris=inventory.labor.find(x=>x.name==="Kris")||{name:"Kris",rate:200};
- const box=inventory.packing.find(x=>x.name==="Box")||{name:"Box",unit:"Pcs",price:30};
-
- const bill1=createTestBill("VAL-TEST-001","Kiran (TEST)",[
-  {name:"Red Stone Bangle",items:[
-   testItem("raw",raw1.name+" ("+raw1.unit+")",100,raw1.price),
-   testItem("raw",kundan.name+" ("+kundan.unit+")",20,kundan.price),
-   testItem("labor",tanuja.name+" (Hours)",2,tanuja.rate),
-   testItem("packing",box.name+" ("+box.unit+")",1,box.price)]},
-  {name:"Green Kundan Bangle",items:[
-   testItem("raw",raw1.name+" ("+raw1.unit+")",80,raw1.price),
-   testItem("raw",stones.name+" ("+stones.unit+")",15,stones.price),
-   testItem("labor",kris.name+" (Hours)",1,kris.rate)]},
-  {name:"Bridal Bangle Set",items:[
-   testItem("raw",kundan.name+" ("+kundan.unit+")",30,kundan.price),
-   testItem("raw",stones.name+" ("+stones.unit+")",20,stones.price),
-   testItem("labor",tanuja.name+" (Hours)",3,tanuja.rate),
-   testItem("packing",box.name+" ("+box.unit+")",1,box.price)]}
- ],50,100);
-
- const bill2=createTestBill("VAL-TEST-002","Priya (TEST)",[
-  {name:"Gold Bangle",items:[
-   testItem("raw",raw1.name+" ("+raw1.unit+")",100,raw1.price),
-   testItem("raw",kundan.name+" ("+kundan.unit+")",25,kundan.price),
-   testItem("labor",kris.name+" (Hours)",1,kris.rate)]},
-  {name:"Stone Bangle",items:[
-   testItem("raw",stones.name+" ("+stones.unit+")",20,stones.price),
-   testItem("labor",tanuja.name+" (Hours)",2,tanuja.rate),
-   testItem("packing",box.name+" ("+box.unit+")",1,box.price)]}
- ],0,0);
-
- inventory.savedBills=inventory.savedBills.filter(b=>!(b.details.invoice||"").startsWith("VAL-TEST-"));
- inventory.savedBills.push(bill1,bill2);
- saveStorage();renderSavedBills();loadBill(bill1);
- alert("Test data loaded. A 3-product bill is open. You can edit, save, WhatsApp and delete the TEST bills.");
-}
-$("test-data").addEventListener("click",e=>{e.preventDefault();loadTestData();});
-
-/* =========================
    PANEL COLLAPSE + BACKUP
 ========================= */
 let inventoryExpanded=true;
@@ -2136,6 +2147,7 @@ function escape(value){
 }
 
 loadStorage();
+mergeRestoredMaterials();
 renderInventory();
 renderSavedBills();
 setupNewBill(true);
